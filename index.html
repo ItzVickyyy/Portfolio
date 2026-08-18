@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vic John Salen Jr. — IT Student &amp; Web Developer</title>
+<meta name="description" content="Portfolio of Vic John Salen Jr., a BS Information Technology student at Laguna State Polytechnic University focused on web development and UI/UX design.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ============================= NAV ============================= -->
+<header class="site-header">
+  <nav class="navbar" aria-label="Primary">
+    <a href="#top" class="brand"><span class="brand-dot">&lt;</span>Vic John<span class="brand-dot">/&gt;</span></a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#skills" class="nav-link">Skills</a></li>
+      <li><a href="#projects" class="nav-link">Projects</a></li>
+      <li><a href="#education" class="nav-link">Education</a></li>
+      <li><a href="#certificates" class="nav-link">Certificates</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ============================= HERO ============================= -->
+  <section class="hero" id="top">
+    <div class="hero-grid-bg" aria-hidden="true"></div>
+    <div class="container">
+      <div class="hero-copy reveal">
+        <span class="hero-kicker"><span class="dot-live"></span> Open to OJT &amp; student opportunities</span>
+        <h1 class="hero-title">
+          Hi, I'm Vic John —<br>
+          I build <span class="text-gradient">web systems</span><br>
+          &amp; design clean <span class="text-gradient">interfaces</span><span class="cursor">&nbsp;</span>
+        </h1>
+        <p class="hero-lede">
+          A BS Information Technology student at Laguna State Polytechnic University — Los Baños, learning to turn ideas into working web systems and thoughtful interfaces, one project at a time.
+        </p>
+        <div class="hero-cta">
+          <a href="#projects" class="btn btn-primary">View my projects</a>
+          <a href="#contact" class="btn btn-ghost" id="heroContactBtn">Get in touch</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <b>3</b>
+            <span>Academic projects built</span>
+          </div>
+          <div class="hero-stat">
+            <b>2×</b>
+            <span>Dean's Lister, LSPU</span>
+          </div>
+          <div class="hero-stat">
+            <b>12+</b>
+            <span>Trainings &amp; certificates</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal">
+        <div class="hero-photo-wrap">
+          <div class="hero-photo-glow" aria-hidden="true"></div>
+          <div class="hero-photo">
+            <img src="assets/images/profile/profile-photo.jpg" alt="Portrait of Vic John Salen Jr.">
+          </div>
+          <div class="hero-badge hero-badge-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5Z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>
+            <span>BS Information<br>Technology</span>
+          </div>
+          <div class="hero-badge hero-badge-2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3Z"/></svg>
+            <span>Dean's Lister<br>A.Y. 2024–2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= ABOUT ============================= -->
+  <section class="section about" id="about">
+    <div class="container">
+      <div class="about-media reveal">
+        <div class="about-photo">
+          <img src="assets/images/profile/profile-2x2.jpg" alt="Vic John Salen Jr., ID-style photo">
+        </div>
+        <div class="about-photo-tag">Los Baños, Laguna, PH</div>
+      </div>
+
+      <div class="about-copy reveal">
+        <span class="eyebrow">About me</span>
+        <h2 class="section-title" style="margin-bottom:20px;">Still learning, already building.</h2>
+        <p>
+          I'm a Bachelor of Science in Information Technology student at Laguna State Polytechnic University — Los Baños Campus, currently a Dean's Lister for two consecutive academic years. Before college, I took the Information and Communication Technology (ICT) strand in senior high school, which is where I first got hooked on building things for the web.
+        </p>
+        <p>
+          Outside the classroom, I've stayed involved as Event Coordinator for the College of Computer Studies Student Council, and earlier as the ICT Representative and Media Club Multimedia Manager back in senior high. I like being useful to a team as much as I like writing code — planning events taught me a lot of the same problem-solving instincts that debugging does.
+        </p>
+        <p>
+          Right now I'm focused on full-stack web development and UI/UX design, and slowly rounding that out with systems and network administration fundamentals from my NC II training. I'm still early in this journey, but every project below is something I actually built, start to finish.
+        </p>
+
+        <dl class="about-facts">
+          <div class="about-fact">
+            <dt>Studying</dt>
+            <dd>BS Information Technology</dd>
+          </div>
+          <div class="about-fact">
+            <dt>School</dt>
+            <dd>LSPU — Los Baños Campus</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Focus</dt>
+            <dd>Web Dev &amp; UI/UX Design</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Based in</dt>
+            <dd>Los Baños, Laguna, PH</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= CAPABILITIES ============================= -->
+  <section class="section capabilities" id="capabilities">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">What I can help with</span>
+        <h2 class="section-title">Capabilities I'm building as a student developer</h2>
+        <p class="section-sub">Not a service menu — this is what I've actually practiced through coursework, self-study, and hands-on training.</p>
+      </div>
+
+      <div class="capabilities-grid">
+        <div class="card capability-card reveal">
+          <div class="capability-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3>Web Development</h3>
+          <p>Building web systems with HTML, CSS, JavaScript, PHP, and MySQL — from database-backed portals to CMS-style sites with role-based access.</p>
+        </div>
+
+        <div class="card capability-card reveal">
+          <div class="capability-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+          </div>
+          <h3>UI/UX Design</h3>
+          <p>Designing wireframes and prototypes in Figma, thinking through user flow and accessibility before a single line of code gets written.</p>
+        </div>
+
+        <div class="card capability-card reveal">
+          <div class="capability-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.7-4 3-9 3s-9-1.3-9-3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/></svg>
+          </div>
+          <h3>Database Systems / SQL</h3>
+          <p>Designing relational schemas and writing queries in MySQL for applications with authentication, CRUD operations, and admin dashboards.</p>
+        </div>
+
+        <div class="card capability-card reveal">
+          <div class="capability-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3>Networking &amp; IT Support</h3>
+          <p>NC II-trained in Computer Systems Servicing: hardware assembly, troubleshooting, Windows Server, Active Directory, DHCP/DNS, and LAN cabling (T568B).</p>
+        </div>
+
+        <div class="card capability-card reveal">
+          <div class="capability-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m23 7-7 5 7 5V7Z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          </div>
+          <h3>Photo &amp; Video Editing</h3>
+          <p>Multimedia production for school events and publications, built during my time as Multimedia Manager for the Media Club.</p>
+        </div>
+
+        <div class="card capability-card reveal">
+          <div class="capability-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3>Systems Administration</h3>
+          <p>Client/server architecture, data backup &amp; recovery, and day-to-day system upkeep — grounded in hands-on NC II training.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= SKILLS ============================= -->
+  <section class="section skills" id="skills">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Technical skills</span>
+        <h2 class="section-title">Where I currently stand</h2>
+        <p class="section-sub">Honest self-assessed proficiency, not exact science — these move as I keep building.</p>
+      </div>
+
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+          <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="4%" stop-color="#fd6f00"/>
+            <stop offset="95%" stop-color="#e46400"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <div class="skills-grid">
+
+        <div class="card skill-card reveal" data-skill="82">
+          <div class="ring">
+            <svg viewBox="0 0 120 120">
+              <circle class="ring-track" cx="60" cy="60" r="54"/>
+              <circle class="ring-fill" cx="60" cy="60" r="54"/>
+            </svg>
+            <span class="ring-label">82%</span>
+          </div>
+          <span class="skill-name">Web Development</span>
+          <span class="skill-note">HTML · CSS · JS · PHP · MySQL</span>
+        </div>
+
+        <div class="card skill-card reveal" data-skill="75">
+          <div class="ring">
+            <svg viewBox="0 0 120 120">
+              <circle class="ring-track" cx="60" cy="60" r="54"/>
+              <circle class="ring-fill" cx="60" cy="60" r="54"/>
+            </svg>
+            <span class="ring-label">75%</span>
+          </div>
+          <span class="skill-name">UI/UX Design</span>
+          <span class="skill-note">Figma · Wireframing · Prototyping</span>
+        </div>
+
+        <div class="card skill-card reveal" data-skill="70">
+          <div class="ring">
+            <svg viewBox="0 0 120 120">
+              <circle class="ring-track" cx="60" cy="60" r="54"/>
+              <circle class="ring-fill" cx="60" cy="60" r="54"/>
+            </svg>
+            <span class="ring-label">70%</span>
+          </div>
+          <span class="skill-name">Database Systems / SQL</span>
+          <span class="skill-note">MySQL · Relational Design</span>
+        </div>
+
+        <div class="card skill-card reveal" data-skill="72">
+          <div class="ring">
+            <svg viewBox="0 0 120 120">
+              <circle class="ring-track" cx="60" cy="60" r="54"/>
+              <circle class="ring-fill" cx="60" cy="60" r="54"/>
+            </svg>
+            <span class="ring-label">72%</span>
+          </div>
+          <span class="skill-name">Networking &amp; IT Support</span>
+          <span class="skill-note">NC II · Servers · Hardware</span>
+        </div>
+
+        <div class="card skill-card reveal" data-skill="65">
+          <div class="ring">
+            <svg viewBox="0 0 120 120">
+              <circle class="ring-track" cx="60" cy="60" r="54"/>
+              <circle class="ring-fill" cx="60" cy="60" r="54"/>
+            </svg>
+            <span class="ring-label">65%</span>
+          </div>
+          <span class="skill-name">Photo / Video Editing</span>
+          <span class="skill-note">Content Production</span>
+        </div>
+
+        <div class="card skill-card reveal" data-skill="68">
+          <div class="ring">
+            <svg viewBox="0 0 120 120">
+              <circle class="ring-track" cx="60" cy="60" r="54"/>
+              <circle class="ring-fill" cx="60" cy="60" r="54"/>
+            </svg>
+            <span class="ring-label">68%</span>
+          </div>
+          <span class="skill-name">Systems Administration</span>
+          <span class="skill-note">Client/Server · Backup &amp; Recovery</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= PROJECTS ============================= -->
+  <section class="section projects" id="projects">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Portfolio</span>
+        <h2 class="section-title">Academic projects I've built</h2>
+        <p class="section-sub">Real coursework, real code — each one built solo, start to finish.</p>
+      </div>
+
+      <div class="filter-bar reveal" role="tablist" aria-label="Filter projects by category">
+        <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button class="filter-btn" data-filter="web" role="tab" aria-selected="false">Web Development</button>
+        <button class="filter-btn" data-filter="uiux" role="tab" aria-selected="false">UI/UX Design</button>
+        <button class="filter-btn" data-filter="academic" role="tab" aria-selected="false">Academic Projects</button>
+      </div>
+
+      <div class="projects-grid" id="projectsGrid">
+
+        <article class="card project-card reveal" data-category="web academic">
+          <div class="project-media">
+            <div class="project-glyph">Project asset / screenshot<br>coming soon</div>
+          </div>
+          <div class="project-body">
+            <div class="project-top">
+              <h3>Admission Portal</h3>
+              <span class="project-year">2026</span>
+            </div>
+            <span class="project-role">Solo Developer · Advanced Database Systems</span>
+            <p class="project-desc">A role-based web portal for managing applicant profiles for an academic admission system. Features secure login, dynamic data tables with full CRUD functionality, and an admin dashboard for managing applicant records and status.</p>
+            <div class="project-stack">
+              <span class="tag">PHP</span>
+              <span class="tag">JavaScript</span>
+              <span class="tag">MySQL</span>
+              <span class="tag">HTML/CSS</span>
+              <span class="tag">Role-based Auth</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card project-card reveal" data-category="uiux academic">
+          <div class="project-media">
+            <div class="project-glyph">Project asset / screenshot<br>coming soon</div>
+          </div>
+          <div class="project-body">
+            <div class="project-top">
+              <h3>Hobby Track</h3>
+              <span class="project-year">2026</span>
+            </div>
+            <span class="project-role">Solo Designer · Platform Technology</span>
+            <p class="project-desc">A mobile app UI/UX prototype designed in Figma to help users discover personal interests and build habits through daily check-ins, progress tracking, and personalized reminders. Focused on simplicity and an accessible user flow.</p>
+            <div class="project-stack">
+              <span class="tag">Figma</span>
+              <span class="tag">UI/UX Design</span>
+              <span class="tag">Prototyping</span>
+              <span class="tag">Wireframing</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card project-card reveal" data-category="web academic">
+          <div class="project-media">
+            <div class="project-glyph">Project asset / screenshot<br>coming soon</div>
+          </div>
+          <div class="project-body">
+            <div class="project-top">
+              <h3>Media Club Website</h3>
+              <span class="project-year">2023</span>
+            </div>
+            <span class="project-role">Lead Developer · Practical Research</span>
+            <p class="project-desc">A content management website built for the school's Media Club, letting staff editors publish and manage news articles while readers browse published content. Built with role-based access distinguishing contributors, editors, and administrators.</p>
+            <div class="project-stack">
+              <span class="tag">PHP</span>
+              <span class="tag">JavaScript</span>
+              <span class="tag">MySQL</span>
+              <span class="tag">CMS</span>
+              <span class="tag">Role-based Auth</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <p class="form-note" style="text-align:center; margin-top:32px;">More projects, live links, and GitHub repos are on the way as they're ready to share.</p>
+    </div>
+  </section>
+
+  <!-- ============================= EDUCATION ============================= -->
+  <section class="section education" id="education">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Education</span>
+        <h2 class="section-title">My academic journey</h2>
+        <p class="section-sub">From elementary school to a College of Computer Studies student council seat.</p>
+      </div>
+
+      <div class="timeline">
+
+        <div class="timeline-item reveal">
+          <span class="timeline-dot"></span>
+          <div class="card timeline-card">
+            <span class="timeline-period">2024 — Present</span>
+            <h3>Laguna State Polytechnic University — Los Baños Campus</h3>
+            <p class="timeline-org">Bachelor of Science in Information Technology, College of Computer Studies</p>
+            <div class="timeline-honors">
+              <span class="tag">Dean's Lister — 1st Year (A.Y. 2024–2025)</span>
+              <span class="tag">Dean's Lister — 2nd Year (A.Y. 2025–2026)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal">
+          <span class="timeline-dot"></span>
+          <div class="card timeline-card">
+            <span class="timeline-period">2022 — 2024</span>
+            <h3>Colegio De Los Baños</h3>
+            <p class="timeline-org">Senior High School — Information and Communication Technology (ICT) Strand</p>
+            <div class="timeline-honors">
+              <span class="tag">Grade 12 — With High Honors</span>
+              <span class="tag">Grade 11 — With High Honors</span>
+              <span class="tag">3 Special Awards</span>
+              <span class="tag">Outstanding Award — Yazaki Torres</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal">
+          <span class="timeline-dot"></span>
+          <div class="card timeline-card">
+            <span class="timeline-period">2018 — 2022</span>
+            <h3>Los Baños National High School</h3>
+            <p class="timeline-org">Junior High School — Batong Malake, Los Baños, Laguna</p>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal">
+          <span class="timeline-dot"></span>
+          <div class="card timeline-card">
+            <span class="timeline-period">2014 — 2018</span>
+            <h3>Mayondon Elementary School</h3>
+            <p class="timeline-org">Elementary Education — Mayondon, Los Baños, Laguna</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= CERTIFICATES ============================= -->
+  <section class="section certificates" id="certificates">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Certificates &amp; Achievements</span>
+        <h2 class="section-title">Trainings, seminars, and recognitions</h2>
+        <p class="section-sub">Ordered from most significant to lighter participation certificates. Click any card to view it full-size.</p>
+      </div>
+
+      <h3 class="cert-tier-label">In progress</h3>
+      <div class="cert-grid">
+        <div class="card cert-card is-pending" aria-disabled="true">
+          <div class="cert-thumb">
+            <div class="cert-thumb-empty">Certificate pending issuance</div>
+          </div>
+          <div class="cert-info">
+            <h3>NC II — Computer Systems Servicing</h3>
+            <p>LFS Training and Assessment Center Inc. · Awaiting official issuance</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="cert-tier-label">Certificates of excellence &amp; awards</h3>
+      <div class="cert-grid">
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-excellence-dashboard.jpg" data-cert-title="Certificate of Excellence — Best in Dashboard Analysis" data-cert-desc="Work Immersion, Torres Technology Center Corp. — recognized for proficiency in dashboard analysis, data interpretation, and strategic visualization.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-excellence-dashboard.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>Certificate of Excellence — Best in Dashboard Analysis</h3>
+            <p>Torres Technology Center Corp. · Work Immersion</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-best-delegate.jpg" data-cert-title="Certificate of Award — Best Delegate" data-cert-desc="Climate Change and Sustainable Life international webinar, Thai Nguyen University of Agriculture and Forestry — Nov 27–28, 2023.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-best-delegate.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>Certificate of Award — Best Delegate</h3>
+            <p>Climate Change &amp; Sustainable Life Webinar</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-recognition-employee-rights.jpg" data-cert-title="Certificate of Recognition — Employee Rights Advocate" data-cert-desc="SHS Work Immersion Graduation Event, Torres Technology Center Corp., Calamba City, Laguna — Nov 17, 2023.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-recognition-employee-rights.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>Certificate of Recognition — Employee Rights Advocate</h3>
+            <p>Torres Technology Center Corp. · Work Immersion</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+      </div>
+
+      <h3 class="cert-tier-label">Completions</h3>
+      <div class="cert-grid">
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-ileap-completion.jpg" data-cert-title="Certificate of Completion — i-Leap Program" data-cert-desc="Senior High School Full Face-to-Face Work Immersion, 80 hours of simulation experience — Torres Technology Center Corp., Nov 18, 2023.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-ileap-completion.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>Certificate of Completion — i-Leap Work Immersion</h3>
+            <p>Torres Technology Center Corp. · 80 hours</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-webdev-fundamentals.jpg" data-cert-title="Certificate of Completion — Web Development Fundamentals" data-cert-desc="Completed June 7, 2026 via Your Learning Builder – Plans system of record.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-webdev-fundamentals.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>Certificate of Completion — Web Development Fundamentals</h3>
+            <p>Completed June 2026</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+      </div>
+
+      <h3 class="cert-tier-label">Participation</h3>
+      <div class="cert-grid">
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-climate-change-webinar.jpg" data-cert-title="Certificate of Participation — Climate Change and Sustainable Life" data-cert-desc="2-day international webinar, Thai Nguyen University of Agriculture and Forestry — Nov 27–28, 2023.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-climate-change-webinar.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>Climate Change &amp; Sustainable Life Webinar</h3>
+            <p>Thai Nguyen University of Agriculture &amp; Forestry</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-syensaya-technoforum.jpg" data-cert-title="Certificate of Participation — SyenSaya TechnoForum" data-cert-desc="Coding Conscience: A Student's Guide to AI Ethics and Innovation.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-syensaya-technoforum.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>SyenSaya TechnoForum — Coding Conscience</h3>
+            <p>A Student's Guide to AI Ethics and Innovation</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-laguna-summit.jpg" data-cert-title="Certificate of Participation — 1st Laguna Youth and Volunteerism Summit 2023" data-cert-desc="Held Sept 8–9, 2023 at Charles Fuller Baker Hall, University of the Philippines Los Baños.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-laguna-summit.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>1st Laguna Youth &amp; Volunteerism Summit 2023</h3>
+            <p>UP Los Baños</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-lbtimes-day1.jpg" data-cert-title="Certificate of Participation — LB Times Journalism Training (Day 1)" data-cert-desc="Journalism seminar training, day 1 of 2.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-lbtimes-day1.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>LB Times Journalism Training — Day 1</h3>
+            <p>Journalism Seminar</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-lbtimes-day2.jpg" data-cert-title="Certificate of Participation — LB Times Journalism Training (Day 2)" data-cert-desc="Journalism seminar training, day 2 of 2.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-lbtimes-day2.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>LB Times Journalism Training — Day 2</h3>
+            <p>Journalism Seminar</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-debugging-degree.jpg" data-cert-title="Certificate of Participation — Debugging Your Degree" data-cert-desc="Student development seminar.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-debugging-degree.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>Debugging Your Degree</h3>
+            <p>Student Seminar</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+
+        <button class="cert-card" data-cert-img="assets/images/certificates/cert-hosting-seminar.jpg" data-cert-title="Certificate of Participation — Hosting Seminar" data-cert-desc="Media Club, Events/Program Hosting Seminar — June 29, 2023.">
+          <div class="cert-thumb"><img src="assets/images/certificates/cert-hosting-seminar.jpg" alt="" loading="lazy"></div>
+          <div class="cert-info">
+            <h3>Hosting Seminar</h3>
+            <p>Media Club — Events/Program Hosting</p>
+            <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= CONNECT STRIP ============================= -->
+  <section class="section" style="padding-top:0;">
+    <div class="container">
+      <div class="connect reveal">
+        <h2>Have a project in mind, or just want to say hi?</h2>
+        <div class="connect-actions">
+          <button class="btn btn-primary" id="connectContactBtn">Contact me</button>
+          <a href="#projects" class="btn btn-ghost">See my work</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================= FOOTER ============================= -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#top" class="brand"><span class="brand-dot">&lt;</span>Vic John<span class="brand-dot">/&gt;</span></a>
+        <p>BS Information Technology student building web systems and interfaces, one project at a time.</p>
+        <div class="footer-socials">
+          <span class="social-btn is-disabled" title="GitHub — coming soon" aria-label="GitHub, coming soon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.8.1-.8 1.2.1 1.9 1.2 1.9 1.2 1.1 1.9 2.9 1.4 3.6 1 .1-.8.4-1.4.8-1.7-2.7-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.7 5.6-5.4 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"/></svg>
+          </span>
+          <span class="social-btn is-disabled" title="LinkedIn — coming soon" aria-label="LinkedIn, coming soon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM3.2 8.75h3.5V21H3.2V8.75ZM9.5 8.75h3.36v1.68h.05c.47-.88 1.6-1.8 3.3-1.8 3.53 0 4.18 2.32 4.18 5.34V21h-3.5v-5.8c0-1.38-.03-3.16-1.93-3.16-1.93 0-2.22 1.5-2.22 3.06V21H9.5V8.75Z"/></svg>
+          </span>
+          <span class="social-btn is-disabled" title="Facebook — coming soon" aria-label="Facebook, coming soon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#education">Education</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>More</h4>
+        <ul>
+          <li><a href="#certificates">Certificates</a></li>
+          <li><button class="link-like" id="footerContactBtn">Contact me</button></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><span>Los Baños, Laguna, PH</span></li>
+          <li><button class="link-like" id="footerContactBtn2">Send a message →</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Vic John Salen Jr. All rights reserved.</span>
+      <span>Built by hand with HTML, CSS &amp; JavaScript.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================= CONTACT MODAL ============================= -->
+<div class="modal-overlay" id="contactModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
+    <button class="modal-close" id="contactModalClose" aria-label="Close contact form">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h2 id="contactModalTitle">Let's talk</h2>
+    <p class="modal-sub">Send a message and I'll get back to you as soon as I can. (Form is front-end only for now — email delivery isn't wired up yet.)</p>
+
+    <form id="contactForm" novalidate>
+      <div class="form-row">
+        <label for="cf-name">Name</label>
+        <input type="text" id="cf-name" name="name" required autocomplete="name">
+      </div>
+      <div class="form-row">
+        <label for="cf-email">Email</label>
+        <input type="email" id="cf-email" name="email" required autocomplete="email">
+      </div>
+      <div class="form-row">
+        <label for="cf-message">Message</label>
+        <textarea id="cf-message" name="message" rows="4" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Send message</button>
+      <p class="form-success" id="formSuccess">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+        Thanks! Your message was captured — I'll follow up soon.
+      </p>
+    </form>
+  </div>
+</div>
+
+<!-- ============================= CERTIFICATE VIEWER MODAL ============================= -->
+<div class="modal-overlay" id="certModal">
+  <div class="modal cert-modal" role="dialog" aria-modal="true" aria-labelledby="certModalTitle">
+    <button class="modal-close" id="certModalClose" aria-label="Close certificate viewer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <img src="" alt="" class="cert-modal-img" id="certModalImg">
+    <div class="cert-modal-body">
+      <h2 id="certModalTitle"></h2>
+      <p id="certModalDesc"></p>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
