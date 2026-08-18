@@ -213,30 +213,35 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 }
 
 .hero-stats{
-  display:flex;
-  gap:0;
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  align-items:start;
   border-top:1px solid var(--surface-border);
   padding-top:28px;
   max-width:480px;
+  width:100%;
 }
 .hero-stat{
-  flex:1;
   padding-right:22px;
   border-right:1px solid var(--surface-border);
+  min-width:0;
 }
-.hero-stat:last-child{ border-right:none; padding-right:0; padding-left:22px; }
-.hero-stat:first-child{ padding-left:0; }
+.hero-stat:last-child{ border-right:none; padding-right:0; }
+.hero-stat:not(:first-child){ padding-left:22px; }
 .hero-stat b{
   display:block;
   font-family:var(--font-display);
   font-size:1.8rem;
+  line-height:1.2;
   background:var(--accent-gradient);
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
 }
 .hero-stat span{
+  display:block;
   font-size:.82rem;
+  line-height:1.4;
   color:var(--text-muted);
 }
 

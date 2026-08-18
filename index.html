@@ -6,6 +6,19 @@
 <title>Vic John Salen Jr. — IT Student &amp; Web Developer</title>
 <meta name="description" content="Portfolio of Vic John Salen Jr., a BS Information Technology student at Laguna State Polytechnic University focused on web development and UI/UX design.">
 
+<script>
+  // Runs before first paint to avoid a flash of the wrong theme.
+  (function () {
+    try {
+      var saved = localStorage.getItem('vjs-portfolio-theme');
+      var theme = (saved === 'light' || saved === 'dark')
+        ? saved
+        : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) {}
+  })();
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -50,7 +63,7 @@
     <div class="hero-grid-bg" aria-hidden="true"></div>
     <div class="container">
       <div class="hero-copy reveal">
-        <span class="hero-kicker"><span class="dot-live"></span> Open to Commissions &amp; student opportunities</span>
+        <span class="hero-kicker"><span class="dot-live"></span> Open to OJT &amp; student opportunities</span>
         <h1 class="hero-title">
           Hi, I'm Vic John —<br>
           I build <span class="text-gradient">web systems</span><br>
@@ -611,15 +624,15 @@
         <a href="#top" class="brand"><span class="brand-dot">&lt;</span>Vic John<span class="brand-dot">/&gt;</span></a>
         <p>BS Information Technology student building web systems and interfaces, one project at a time.</p>
         <div class="footer-socials">
-          <span class="social-btn is-disabled" title="GitHub — coming soon" aria-label="GitHub, coming soon">
+          <a class="social-btn" href="https://github.com/ItzVickyyy" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.8.1-.8 1.2.1 1.9 1.2 1.9 1.2 1.1 1.9 2.9 1.4 3.6 1 .1-.8.4-1.4.8-1.7-2.7-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.7 5.6-5.4 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"/></svg>
-          </span>
-          <span class="social-btn is-disabled" title="LinkedIn — coming soon" aria-label="LinkedIn, coming soon">
+          </a>
+          <a class="social-btn" href="https://linkedin.com/in/vicjohnsalen/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM3.2 8.75h3.5V21H3.2V8.75ZM9.5 8.75h3.36v1.68h.05c.47-.88 1.6-1.8 3.3-1.8 3.53 0 4.18 2.32 4.18 5.34V21h-3.5v-5.8c0-1.38-.03-3.16-1.93-3.16-1.93 0-2.22 1.5-2.22 3.06V21H9.5V8.75Z"/></svg>
-          </span>
-          <span class="social-btn is-disabled" title="Facebook — coming soon" aria-label="Facebook, coming soon">
+          </a>
+          <a class="social-btn" href="https://facebook.com/Itz.Me.VicJohn" target="_blank" rel="noopener" title="Facebook" aria-label="Facebook">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>
-          </span>
+          </a>
         </div>
       </div>
 
@@ -645,6 +658,8 @@
         <h4>Contact</h4>
         <ul>
           <li><span>Los Baños, Laguna, PH</span></li>
+          <li><a href="mailto:JohnSalen13@gmail.com">JohnSalen13@gmail.com</a></li>
+          <li><a href="tel:+639918833309">0991 883 3309</a></li>
           <li><button class="link-like" id="footerContactBtn2">Send a message →</button></li>
         </ul>
       </div>

@@ -14,21 +14,12 @@
   var themeToggle = document.getElementById('themeToggle');
   var THEME_KEY = 'vjs-portfolio-theme';
 
+  // Theme is already applied by the inline script in <head> (avoids a flash
+  // of the wrong theme on load). This just persists changes on toggle.
   function applyTheme(theme) {
     root.setAttribute('data-theme', theme);
     try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
   }
-
-  (function initTheme() {
-    var saved;
-    try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
-    if (saved === 'light' || saved === 'dark') {
-      applyTheme(saved);
-    } else {
-      var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-      applyTheme(prefersLight ? 'light' : 'dark');
-    }
-  })();
 
   if (themeToggle) {
     themeToggle.addEventListener('click', function () {
