@@ -1,0 +1,247 @@
+/* ==========================================================================
+   DESIGN TOKENS
+   Vic John Salen — Personal Portfolio
+   ========================================================================== */
+
+:root{
+  /* ---- Brand accent (from the source Figma designs) ---- */
+  --accent-500:#fd6f00;
+  --accent-600:#e46400;
+  --accent-400:#fd853a;
+  --accent-300:#feb273;
+  --accent-gradient: linear-gradient(100deg, var(--accent-500) 4%, var(--accent-600) 95%);
+
+  /* ---- Dark theme (default) ---- */
+  --bg:#121110;
+  --bg-elevated:#1a1917;
+  --bg-elevated-2:#221f1c;
+  --surface:#1e1c19;
+  --surface-border:#332f2a;
+  --text:#f3f1ec;
+  --text-muted:#a8a29a;
+  --text-faint:#726c63;
+  --ring-track:#2c2924;
+
+  /* ---- Shared ---- */
+  --radius-sm:10px;
+  --radius-md:16px;
+  --radius-lg:26px;
+  --radius-pill:100px;
+  --shadow-soft: 0 20px 50px -20px rgba(0,0,0,.5);
+  --shadow-pop: 0 10px 30px -8px rgba(253,111,0,.35);
+
+  --font-display:'Urbanist', sans-serif;
+  --font-body:'Manrope', sans-serif;
+  --font-mono:'JetBrains Mono', monospace;
+
+  --container: 1180px;
+  --nav-h: 84px;
+
+  --ease: cubic-bezier(.19,1,.22,1);
+  color-scheme: dark;
+}
+
+html[data-theme="light"]{
+  --bg:#faf9f6;
+  --bg-elevated:#ffffff;
+  --bg-elevated-2:#f2f0ea;
+  --surface:#ffffff;
+  --surface-border:#e7e3da;
+  --text:#171412;
+  --text-muted:#5f594f;
+  --text-faint:#948d81;
+  --ring-track:#e7e3da;
+  --shadow-soft: 0 20px 50px -25px rgba(20,15,5,.25);
+  color-scheme: light;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  transition:background .35s var(--ease), color .35s var(--ease);
+  overflow-x:hidden;
+}
+
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+button{ font-family:inherit; cursor:pointer; }
+ul{ list-style:none; margin:0; padding:0; }
+
+::selection{ background:var(--accent-500); color:#fff; }
+
+:focus-visible{
+  outline:2px solid var(--accent-400);
+  outline-offset:3px;
+  border-radius:4px;
+}
+
+h1,h2,h3,h4{
+  font-family:var(--font-display);
+  font-weight:700;
+  margin:0;
+  letter-spacing:-.01em;
+}
+
+p{ margin:0; }
+
+.container{
+  width:100%;
+  max-width:var(--container);
+  margin:0 auto;
+  padding:0 24px;
+}
+
+.section{
+  padding:120px 0;
+  position:relative;
+}
+@media (max-width:768px){
+  .section{ padding:80px 0; }
+}
+
+.section-head{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:14px;
+  margin-bottom:64px;
+}
+
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:var(--font-mono);
+  font-size:13px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--accent-400);
+}
+.eyebrow::before{
+  content:'';
+  width:8px; height:8px;
+  border-radius:50%;
+  background:var(--accent-gradient);
+}
+
+.section-title{
+  font-size:clamp(2rem, 4vw, 2.75rem);
+  max-width:640px;
+}
+
+.section-sub{
+  color:var(--text-muted);
+  max-width:520px;
+  font-size:1.02rem;
+}
+
+.text-gradient{
+  background:var(--accent-gradient);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+/* ---- Buttons ---- */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:15px 30px;
+  border-radius:var(--radius-pill);
+  font-weight:700;
+  font-size:.95rem;
+  border:1px solid transparent;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
+  white-space:nowrap;
+}
+.btn:active{ transform:scale(.97); }
+
+.btn-primary{
+  background:var(--accent-gradient);
+  color:#fff;
+  box-shadow:var(--shadow-pop);
+}
+.btn-primary:hover{ transform:translateY(-3px); box-shadow:0 16px 34px -10px rgba(253,111,0,.5); }
+
+.btn-ghost{
+  background:transparent;
+  color:var(--text);
+  border-color:var(--surface-border);
+}
+.btn-ghost:hover{ border-color:var(--accent-400); color:var(--accent-400); transform:translateY(-3px); }
+
+.btn-sm{ padding:10px 20px; font-size:.85rem; }
+
+.btn[disabled]{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+/* ---- Pill / tag / badge ---- */
+.tag{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 14px;
+  border-radius:var(--radius-pill);
+  font-size:.78rem;
+  font-weight:600;
+  background:var(--bg-elevated-2);
+  border:1px solid var(--surface-border);
+  color:var(--text-muted);
+}
+
+/* ---- Card base ---- */
+.card{
+  background:var(--surface);
+  border:1px solid var(--surface-border);
+  border-radius:var(--radius-md);
+  transition:transform .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease);
+}
+
+/* ---- Reveal on scroll ---- */
+.reveal{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity .7s var(--ease), transform .7s var(--ease);
+}
+.reveal.is-visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.skip-link{
+  position:absolute;
+  left:-999px;
+  top:0;
+  background:var(--accent-500);
+  color:#fff;
+  padding:12px 20px;
+  z-index:999;
+  border-radius:0 0 8px 0;
+}
+.skip-link:focus{ left:0; }
+
+.visually-hidden{
+  position:absolute !important;
+  width:1px; height:1px;
+  overflow:hidden;
+  clip:rect(0 0 0 0);
+  white-space:nowrap;
+}
