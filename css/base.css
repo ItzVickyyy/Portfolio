@@ -20,7 +20,6 @@
   --text:#f3f1ec;
   --text-muted:#a8a29a;
   --text-faint:#726c63;
-  --ring-track:#2c2924;
 
   /* ---- Shared ---- */
   --radius-sm:10px;
@@ -34,7 +33,7 @@
   --font-body:'Manrope', sans-serif;
   --font-mono:'JetBrains Mono', monospace;
 
-  --container: 1180px;
+  --container: 1400px;
   --nav-h: 84px;
 
   --ease: cubic-bezier(.19,1,.22,1);
@@ -50,7 +49,6 @@ html[data-theme="light"]{
   --text:#171412;
   --text-muted:#5f594f;
   --text-faint:#948d81;
-  --ring-track:#e7e3da;
   --shadow-soft: 0 20px 50px -25px rgba(20,15,5,.25);
   color-scheme: light;
 }
@@ -74,7 +72,12 @@ body{
   overflow-x:hidden;
 }
 
-img{ max-width:100%; display:block; }
+img{
+  max-width:100%;
+  display:block;
+  -webkit-user-drag:none;
+  user-drag:none;
+}
 a{ color:inherit; text-decoration:none; }
 button{ font-family:inherit; cursor:pointer; }
 ul{ list-style:none; margin:0; padding:0; }
@@ -100,15 +103,15 @@ p{ margin:0; }
   width:100%;
   max-width:var(--container);
   margin:0 auto;
-  padding:0 24px;
+  padding:0 40px;
 }
 
 .section{
-  padding:120px 0;
+  padding:90px 0;
   position:relative;
 }
 @media (max-width:768px){
-  .section{ padding:80px 0; }
+  .section{ padding:60px 0; }
 }
 
 .section-head{
@@ -117,7 +120,7 @@ p{ margin:0; }
   align-items:center;
   text-align:center;
   gap:14px;
-  margin-bottom:64px;
+  margin-bottom:48px;
 }
 
 .eyebrow{

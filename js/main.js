@@ -2,6 +2,15 @@
   'use strict';
 
   /* ---------------------------------------------------------
+     Disable image dragging (CSS user-drag doesn't cover every
+     browser — Firefox in particular — so this is the reliable
+     cross-browser fallback). Doesn't affect clicks/taps.
+  --------------------------------------------------------- */
+  document.addEventListener('dragstart', function (e) {
+    if (e.target && e.target.tagName === 'IMG') e.preventDefault();
+  });
+
+  /* ---------------------------------------------------------
      Footer year
   --------------------------------------------------------- */
   var yearEl = document.getElementById('year');
@@ -71,30 +80,15 @@
   setActiveNav();
 
   /* ---------------------------------------------------------
-     Scroll reveal + skill ring animation via IntersectionObserver
+     Scroll reveal via IntersectionObserver
   --------------------------------------------------------- */
   var revealEls = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
-  var skillCards = Array.prototype.slice.call(document.querySelectorAll('.skill-card'));
-
-  function animateRing(card) {
-    var target = parseFloat(card.getAttribute('data-skill')) || 0;
-    var circle = card.querySelector('.ring-fill');
-    if (!circle) return;
-    var circumference = 2 * Math.PI * 54; // r=54
-    var offset = circumference - (target / 100) * circumference;
-    requestAnimationFrame(function () {
-      circle.style.strokeDashoffset = offset;
-    });
-  }
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-visible');
-          if (entry.target.classList.contains('skill-card')) {
-            animateRing(entry.target);
-          }
           io.unobserve(entry.target);
         }
       });
@@ -103,7 +97,6 @@
     revealEls.forEach(function (el) { io.observe(el); });
   } else {
     revealEls.forEach(function (el) { el.classList.add('is-visible'); });
-    skillCards.forEach(animateRing);
   }
 
   /* ---------------------------------------------------------
@@ -256,23 +249,78 @@
 
   /* ---------------------------------------------------------
      Certificate viewer modal
+
+     - Clears the previous certificate immediately on click so it can
+       never flash while the new one is loading.
+     - Uses a request id to guard against rapid switching: if a slow
+       image finishes loading after a newer certificate was selected,
+       its result is discarded instead of overwriting the modal.
+     - Preloads the full-resolution image on hover/focus so it's often
+       already cached by the time the person clicks.
   --------------------------------------------------------- */
   var certModal = document.getElementById('certModal');
+  var certModalEl = certModal ? certModal.querySelector('.cert-modal') : null;
   var certModalImg = document.getElementById('certModalImg');
   var certModalTitle = document.getElementById('certModalTitle');
   var certModalDesc = document.getElementById('certModalDesc');
   var certModalClose = document.getElementById('certModalClose');
 
+  var certRequestId = 0;                    // guards against a late-loading image overwriting a newer selection
+  var certPreloaded = Object.create(null);  // avoids re-requesting the same certificate more than once per session
+
+  function preloadCertImage(src) {
+    if (!src || certPreloaded[src]) return;
+    certPreloaded[src] = true;
+    var pre = new Image();
+    pre.src = src;
+  }
+
+  function setCertModalState(state) {
+    if (!certModalEl) return;
+    certModalEl.classList.remove('is-loading', 'is-error');
+    if (state === 'loading' || state === 'error') certModalEl.classList.add('is-' + state);
+  }
+
+  function loadCertImage(src, title, requestId) {
+    var loader = new Image();
+
+    loader.onload = function () {
+      if (requestId !== certRequestId) return; // a newer certificate was opened meanwhile — ignore
+      certModalImg.src = src;
+      certModalImg.alt = title;
+      setCertModalState('ready');
+    };
+
+    loader.onerror = function () {
+      if (requestId !== certRequestId) return;
+      setCertModalState('error');
+    };
+
+    loader.src = src;
+  }
+
   document.querySelectorAll('[data-cert-img]').forEach(function (card) {
+    var src = card.getAttribute('data-cert-img');
+
+    card.addEventListener('mouseenter', function () { preloadCertImage(src); });
+    card.addEventListener('focus', function () { preloadCertImage(src); });
+
     card.addEventListener('click', function () {
-      var img = card.getAttribute('data-cert-img');
       var title = card.getAttribute('data-cert-title') || '';
       var desc = card.getAttribute('data-cert-desc') || '';
-      certModalImg.src = img;
-      certModalImg.alt = title;
+
+      certRequestId += 1;
+      var thisRequestId = certRequestId;
+
+      // Reset immediately — the previous certificate must never linger.
+      certModalImg.removeAttribute('src');
+      certModalImg.alt = '';
       certModalTitle.textContent = title;
       certModalDesc.textContent = desc;
+      setCertModalState('loading');
+
       openModal(certModal);
+      loadCertImage(src, title, thisRequestId);
     });
   });
 
