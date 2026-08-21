@@ -123,6 +123,37 @@
   });
 
   /* ---------------------------------------------------------
+     Certificate tabs (Excellence & Awards / Completions /
+     Participation / In progress) — only one label + carousel
+     is shown at a time.
+  --------------------------------------------------------- */
+  var certTabButtons = Array.prototype.slice.call(document.querySelectorAll('.cert-tab-btn'));
+  var certTabPanels = Array.prototype.slice.call(document.querySelectorAll('.cert-tab-panel'));
+
+  certTabButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = btn.getAttribute('data-cert-tab');
+      var targetPanel = document.getElementById('certPanel-' + target);
+
+      certTabButtons.forEach(function (b) {
+        var isActive = b === btn;
+        b.classList.toggle('active', isActive);
+        b.setAttribute('aria-selected', String(isActive));
+      });
+
+      certTabPanels.forEach(function (panel) {
+        panel.hidden = panel !== targetPanel;
+      });
+
+      // Carousels inside a hidden panel report a 0-width viewport, so their
+      // prev/next buttons need to be recalculated once the panel is shown.
+      if (targetPanel) {
+        window.dispatchEvent(new Event('resize'));
+      }
+    });
+  });
+
+  /* ---------------------------------------------------------
      Certificate carousels
   --------------------------------------------------------- */
   document.querySelectorAll('[data-carousel]').forEach(function (carousel) {
@@ -219,7 +250,7 @@
      Contact modal
   --------------------------------------------------------- */
   var contactModal = document.getElementById('contactModal');
-  var contactOpeners = ['heroContactBtn', 'connectContactBtn', 'footerContactBtn', 'footerContactBtn2']
+  var contactOpeners = ['heroContactBtn', 'connectContactBtn', 'servicesContactBtn', 'footerContactBtn', 'footerContactBtn2']
     .map(function (id) { return document.getElementById(id); })
     .filter(Boolean);
 
