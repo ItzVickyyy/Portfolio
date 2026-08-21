@@ -312,7 +312,7 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   min-width:0;
   height:100%;
 }
-.hero-stat:last-child{ border-right:none; padding-right:0; }
+.hero-stat:last-child{ border-right:none; padding-right:none; }
 .hero-stat:not(:first-child){ padding-left:16px; }
 .hero-stat b{
   display:block;
@@ -394,14 +394,86 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 @media (max-width:640px){
   .hero-photo-wrap{ width:min(62%, 260px); }
 }
+
+/* ---- Compact mobile identity row (avatar + kicker) ----
+   Hidden by default (desktop/tablet just see the kicker, unwrapped via
+   display:contents so it behaves exactly as before); becomes the mobile
+   hero's opening beat at <=480px, replacing the big centered photo. */
+.hero-identity{ display:contents; }
+.hero-avatar{ display:none; }
+
 @media (max-width:480px){
-  .hero-badge{ display:none; }
-  .hero-photo-wrap{ width:min(56%, 220px); }
-  .hero-cta{ width:100%; gap:10px; flex-direction:column; align-items:stretch; }
-  .hero-cta .btn{ width:100%; white-space:normal; }
-  .hero-stats{ grid-template-columns:repeat(3, 1fr); gap:6px; }
-  .hero-stat{ padding-right:10px; }
-  .hero-stat:not(:first-child){ padding-left:10px; }
+  .hero{ padding-top:calc(var(--nav-h) + 18px); }
+  .hero .container{ gap:0; }
+  .hero-copy{ min-width:0; }
+
+  /* Recompose: compact avatar+kicker row up top, big photo hidden entirely */
+  .hero-visual{ display:none; }
+  .hero-identity{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .hero-avatar{
+    display:block;
+    width:44px; height:44px;
+    border-radius:50%;
+    overflow:hidden;
+    flex-shrink:0;
+    border:2px solid var(--surface-border);
+    background:var(--bg-elevated);
+  }
+  .hero-avatar img{ width:100%; height:100%; object-fit:cover; filter:grayscale(.15); }
+  .hero-kicker{
+    margin-bottom:0;
+    padding:6px 12px 6px 6px;
+    font-size:.7rem;
+    flex:1 1 auto;
+    min-width:0;
+    white-space:normal;
+  }
+  .hero-kicker span:not(.dot-live){ overflow-wrap:break-word; }
+
+  .hero-title{ font-size:clamp(1.7rem, 1.1rem + 5vw, 2.2rem); text-align:left; margin-bottom:10px; }
+  .hero-lede{ text-align:left; margin-inline:0; margin-bottom:18px; font-size:.88rem; }
+
+  .hero-cta{
+    width:100%;
+    gap:10px;
+    flex-direction:row;
+    flex-wrap:nowrap;
+    justify-content:flex-start;
+    margin-bottom:22px;
+  }
+  .hero-cta .btn{
+    flex:1 1 0;
+    white-space:normal;
+    text-align:center;
+    padding:12px 10px;
+    font-size:.78rem;
+  }
+
+  /* Compact 3-column stat grid — all three visible at once, no scrolling */
+  .hero-stats{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:8px;
+    border-top:none;
+    padding-top:0;
+    margin-inline:0;
+    max-width:none;
+  }
+  .hero-stat{
+    min-width:0;
+    border:1px solid var(--surface-border);
+    border-radius:var(--radius-md);
+    background:var(--bg-elevated);
+    padding:10px 8px;
+    text-align:center;
+  }
+  .hero-stat b{ font-size:1.05rem; }
+  .hero-stat span{ font-size:.66rem; line-height:1.3; }
 }
 
 /* ==========================================================================
@@ -472,8 +544,14 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .about .container{ grid-template-columns:1fr; gap:32px; }
   .about-media{ max-width:360px; margin:0 auto; }
 }
-@media (max-width:420px){
-  .about-facts{ grid-template-columns:1fr; gap:10px; }
+@media (max-width:480px){
+  .about .container{ gap:22px; }
+  .about-media{ max-width:220px; }
+  .about-photo-tag{ font-size:.7rem; padding:8px 12px; bottom:12px; left:12px; }
+  .about-copy p{ margin-bottom:10px; font-size:.86rem; }
+  .about-copy p:last-of-type{ margin-bottom:16px; }
+  .about-facts{ grid-template-columns:1fr 1fr; gap:8px; margin-top:16px; }
+  .about-fact{ padding:10px 12px; }
 }
 
 /* ==========================================================================
@@ -510,10 +588,32 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .capabilities-grid{ grid-template-columns:1fr 1fr; gap:16px; }
 }
 @media (max-width:560px){
-  .capabilities-grid{ grid-template-columns:1fr; gap:12px; }
-  .capability-card{ padding:20px 18px; display:flex; flex-direction:column; }
+  .capability-card{ display:flex; flex-direction:column; }
   .capability-icon{ width:42px; height:42px; border-radius:12px; margin-bottom:12px; }
   .capability-icon svg{ width:22px; height:22px; }
+}
+@media (max-width:480px){
+  /* Horizontal-scroll carousel instead of a tall stacked column */
+  .capabilities-grid{
+    display:flex;
+    grid-template-columns:none;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    gap:12px;
+    margin:0 -4px;
+    padding:2px 4px 6px;
+  }
+  .capabilities-grid::-webkit-scrollbar{ display:none; }
+  .capability-card{
+    flex:0 0 78%;
+    scroll-snap-align:start;
+    padding:18px 16px;
+  }
+}
+@media (max-width:380px){
+  .capability-card{ flex-basis:84%; }
 }
 
 /* ==========================================================================
@@ -571,8 +671,18 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .skills-grid{ grid-template-columns:1fr 1fr; gap:16px; }
 }
 @media (max-width:560px){
-  .skills-grid{ grid-template-columns:1fr; gap:12px; }
-  .skill-card{ padding:20px 20px; gap:10px; }
+  .skill-card{ gap:10px; }
+}
+@media (max-width:480px){
+  .skills-grid{ grid-template-columns:1fr 1fr; gap:10px; }
+  .skill-card{ padding:16px 14px; gap:8px; }
+  .skill-name{ font-size:.86rem; }
+  .skill-tech-chip{ font-size:.6rem; padding:3px 7px; }
+  .skill-level{ font-size:.66rem; padding:3px 10px; }
+  .skill-note{ font-size:.74rem; }
+}
+@media (max-width:360px){
+  .skills-grid{ grid-template-columns:1fr; }
 }
 
 /* ==========================================================================
@@ -704,11 +814,34 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .services-grid{ grid-template-columns:1fr; }
 }
 @media (max-width:560px){
-  .service-pillar{ padding:22px 20px; }
   .service-pillar-head{ gap:12px; }
   .service-pillar-icon{ width:44px; height:44px; }
   .service-pillar-icon svg{ width:20px; height:20px; }
   .service-note{ padding:18px 20px; flex-direction:column; align-items:flex-start; }
+}
+@media (max-width:480px){
+  /* Horizontal-scroll carousel of service pillars instead of two full-height
+     stacked cards — keeps every service group intact, just browsed sideways. */
+  .services-grid{
+    display:flex;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    gap:14px;
+    margin:0 -4px;
+    padding:2px 4px 6px;
+  }
+  .services-grid::-webkit-scrollbar{ display:none; }
+  .service-pillar{
+    flex:0 0 86%;
+    scroll-snap-align:start;
+    padding:20px 18px;
+  }
+  .service-note{ padding:18px 16px; }
+}
+@media (max-width:380px){
+  .service-pillar{ flex-basis:90%; }
 }
 
 /* Compact single-focus service cards (Discord, Web & Portfolio, etc.) */
@@ -738,6 +871,24 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 
 @media (max-width:560px){
   .service-compact{ padding:20px 18px; }
+}
+@media (max-width:480px){
+  .services-grid-compact{
+    display:flex;
+    grid-template-columns:none;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    gap:12px;
+    margin:16px -4px 0;
+    padding:2px 4px 6px;
+  }
+  .services-grid-compact::-webkit-scrollbar{ display:none; }
+  .service-compact{ flex:0 0 82%; scroll-snap-align:start; }
+}
+@media (max-width:380px){
+  .service-compact{ flex-basis:88%; }
 }
 
 /* ==========================================================================
@@ -841,6 +992,26 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 @media (max-width:560px){
   .project-body{ padding:18px 18px 20px; gap:8px; }
   .project-top{ flex-wrap:wrap; }
+}
+@media (max-width:480px){
+  /* Horizontal-scroll carousel — same pattern used for certificates, so
+     browsing projects sideways feels consistent with the rest of the site. */
+  .projects-grid{
+    display:flex;
+    grid-template-columns:none;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    gap:14px;
+    margin:0 -4px;
+    padding:2px 4px 6px;
+  }
+  .projects-grid::-webkit-scrollbar{ display:none; }
+  .project-card{ flex:0 0 85%; scroll-snap-align:start; }
+}
+@media (max-width:380px){
+  .project-card{ flex-basis:90%; }
 }
 
 /* ==========================================================================
@@ -1250,6 +1421,50 @@ button.cert-view{
 }
 @media (max-width:480px){
   .connect{ padding:32px 22px; }
+
+  /* ---- Mobile footer redesign ----
+     Brand becomes a full-width intro row. The Navigation column is dropped
+     entirely — the site already has primary nav, repeating it here just
+     adds height. "More" and "Contact" sit side-by-side as compact wrapped
+     pill rows instead of two tall stacked lists. */
+  .site-footer{ padding-top:32px; }
+  .footer-top{
+    grid-template-columns:1fr 1fr;
+    gap:22px 14px;
+    margin-bottom:26px;
+  }
+  .footer-brand{ grid-column:1 / -1; }
+  .footer-brand p{ max-width:100%; margin:10px 0 14px; font-size:.84rem; }
+  .footer-socials{ gap:8px; }
+  .social-btn{ width:36px; height:36px; }
+  .social-btn svg{ width:15px; height:15px; }
+
+  /* Drop the Navigation column (2nd child of .footer-top) — mobile nav
+     already covers these links. */
+  .footer-top > div:nth-child(2){ display:none; }
+
+  .footer-col h4{ font-size:.7rem; margin-bottom:10px; }
+  .footer-col ul{
+    flex-direction:row;
+    flex-wrap:wrap;
+    gap:7px;
+  }
+  .footer-col li{ min-width:0; }
+  .footer-col a,
+  .footer-col span,
+  .footer-col button.link-like{
+    display:inline-flex;
+    align-items:center;
+    padding:6px 10px;
+    border-radius:var(--radius-pill);
+    background:var(--bg-elevated);
+    border:1px solid var(--surface-border);
+    font-size:.72rem;
+    line-height:1.3;
+  }
+  .footer-col button.link-like:hover{ border-color:var(--accent-400); }
+
+  .footer-bottom{ font-size:.72rem; padding-top:18px; }
 }
 
 /* ==========================================================================
