@@ -167,6 +167,49 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 }
 
 /* ==========================================================================
+   SKELETON LOADING (reusable)
+   Add class="skeleton-img-wrap" to any container that wraps a single <img>
+   (the container needs a defined size — aspect-ratio, fixed height, etc.,
+   same as .hero-photo / .about-photo / .cert-thumb already have) to opt
+   that image into a shimmering placeholder until it finishes loading.
+   main.js watches every .skeleton-img-wrap on the page automatically —
+   no extra JS wiring needed for new instances.
+   ========================================================================== */
+.skeleton-img-wrap{
+  position:relative;
+  background:var(--bg-elevated-2);
+}
+.skeleton-img-wrap img{
+  opacity:0;
+  transition:opacity .45s var(--ease);
+}
+.skeleton-img-wrap.is-loaded img{ opacity:1; }
+.skeleton-img-wrap::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  background:linear-gradient(
+    100deg,
+    transparent 30%,
+    var(--skeleton-shine-a) 45%,
+    var(--skeleton-shine-b) 50%,
+    var(--skeleton-shine-a) 55%,
+    transparent 70%
+  );
+  background-size:200% 100%;
+  animation:skeleton-shimmer 1.6s ease-in-out infinite;
+  opacity:1;
+  transition:opacity .3s var(--ease);
+}
+.skeleton-img-wrap.is-loaded::after{ opacity:0; }
+@keyframes skeleton-shimmer{
+  0%{ background-position:150% 0; }
+  100%{ background-position:-50% 0; }
+}
+
+/* ==========================================================================
    HERO
    ========================================================================== */
 .hero{

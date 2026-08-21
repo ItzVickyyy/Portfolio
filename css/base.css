@@ -38,6 +38,10 @@
 
   --ease: cubic-bezier(.19,1,.22,1);
   color-scheme: dark;
+
+  /* ---- Skeleton loading shimmer (subtle pass over a dark surface) ---- */
+  --skeleton-shine-a: rgba(255,255,255,.04);
+  --skeleton-shine-b: rgba(255,255,255,.12);
 }
 
 html[data-theme="light"]{
@@ -51,6 +55,10 @@ html[data-theme="light"]{
   --text-faint:#948d81;
   --shadow-soft: 0 20px 50px -25px rgba(20,15,5,.25);
   color-scheme: light;
+
+  /* ---- Skeleton loading shimmer (brighter sweep needed on a light surface) ---- */
+  --skeleton-shine-a: rgba(255,255,255,.35);
+  --skeleton-shine-b: rgba(255,255,255,.9);
 }
 
 *,*::before,*::after{ box-sizing:border-box; }
