@@ -11,6 +11,28 @@
   });
 
   /* ---------------------------------------------------------
+     Skeleton loading for images
+     Any .skeleton-img-wrap shows a shimmering placeholder (see
+     components.css) until its <img> finishes loading — or
+     immediately, if the image was already cached. Works for
+     eager and loading="lazy" images alike, and needs no extra
+     wiring for new instances: just add the class in the markup.
+  --------------------------------------------------------- */
+  document.querySelectorAll('.skeleton-img-wrap').forEach(function (wrap) {
+    var img = wrap.querySelector('img');
+    if (!img) return;
+
+    function markLoaded() { wrap.classList.add('is-loaded'); }
+
+    if (img.complete && img.naturalWidth > 0) {
+      markLoaded();
+    } else {
+      img.addEventListener('load', markLoaded);
+      img.addEventListener('error', markLoaded); // don't shimmer forever over a broken image
+    }
+  });
+
+  /* ---------------------------------------------------------
      Footer year
   --------------------------------------------------------- */
   var yearEl = document.getElementById('year');
