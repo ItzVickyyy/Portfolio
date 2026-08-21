@@ -219,7 +219,7 @@
      Contact modal
   --------------------------------------------------------- */
   var contactModal = document.getElementById('contactModal');
-  var contactOpeners = ['heroContactBtn', 'connectContactBtn', 'footerContactBtn', 'footerContactBtn2']
+  var contactOpeners = ['heroContactBtn', 'connectContactBtn', 'servicesContactBtn', 'footerContactBtn', 'footerContactBtn2']
     .map(function (id) { return document.getElementById(id); })
     .filter(Boolean);
 
