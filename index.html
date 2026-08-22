@@ -990,14 +990,23 @@
     <button class="modal-close" id="certModalClose" aria-label="Close certificate viewer">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
-    <div class="cert-modal-media">
-      <img src="" alt="" class="cert-modal-img" id="certModalImg">
+    <div class="cert-modal-media" id="certModalMedia">
+      <img src="" alt="" class="cert-modal-img" id="certModalImg" draggable="false">
       <div class="cert-modal-status cert-modal-loading" aria-hidden="true">
         <span class="cert-spinner"></span>
       </div>
       <div class="cert-modal-status cert-modal-error" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9M21 15l-5-5L5 21M3 3l18 18"/></svg>
         <span>Couldn't load this certificate. Please try again.</span>
+      </div>
+      <div class="cert-zoom-controls" id="certZoomControls">
+        <button type="button" class="cert-zoom-btn" id="certZoomOut" aria-label="Zoom out" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg>
+        </button>
+        <button type="button" class="cert-zoom-btn cert-zoom-reset" id="certZoomReset" aria-label="Reset zoom" disabled>100%</button>
+        <button type="button" class="cert-zoom-btn" id="certZoomIn" aria-label="Zoom in">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
       </div>
     </div>
     <div class="cert-modal-body">

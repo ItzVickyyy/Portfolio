@@ -65,19 +65,50 @@
   var navToggle = document.getElementById('navToggle');
   var navLinks = document.getElementById('navLinks');
 
+  function closeNav() {
+    navLinks.classList.remove('is-open');
+    navToggle.classList.remove('is-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  function openNav() {
+    navLinks.classList.add('is-open');
+    navToggle.classList.add('is-open');
+    navToggle.setAttribute('aria-expanded', 'true');
+  }
+
   if (navToggle && navLinks) {
     navToggle.addEventListener('click', function () {
-      var isOpen = navLinks.classList.toggle('is-open');
-      navToggle.classList.toggle('is-open', isOpen);
-      navToggle.setAttribute('aria-expanded', String(isOpen));
+      if (navLinks.classList.contains('is-open')) {
+        closeNav();
+      } else {
+        openNav();
+      }
     });
 
     navLinks.querySelectorAll('a').forEach(function (link) {
       link.addEventListener('click', function () {
-        navLinks.classList.remove('is-open');
-        navToggle.classList.remove('is-open');
-        navToggle.setAttribute('aria-expanded', 'false');
+        closeNav();
       });
+    });
+
+    // Tapping/clicking outside the open menu (and outside the hamburger
+    // itself, so the toggle's own click isn't immediately undone) closes
+    // it. Uses a single document-level 'click' listener — fires for both
+    // mouse clicks and touch taps, so no separate touch handling (and no
+    // duplicate handlers) is needed.
+    document.addEventListener('click', function (e) {
+      if (!navLinks.classList.contains('is-open')) return;
+      if (navLinks.contains(e.target) || navToggle.contains(e.target)) return;
+      closeNav();
+    });
+
+    // Also close on Escape, matching the modal's existing pattern.
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && navLinks.classList.contains('is-open')) {
+        closeNav();
+        navToggle.focus();
+      }
     });
   }
 
@@ -226,10 +257,16 @@
   function closeModal(overlay) {
     overlay.classList.remove('is-open');
     document.body.classList.remove('modal-open');
+    if (overlay.id === 'certModal') resetCertZoom();
     if (overlay._returnFocusEl && typeof overlay._returnFocusEl.focus === 'function') {
       overlay._returnFocusEl.focus();
     }
   }
+
+  // Reassigned below once the certificate zoom module initializes; kept as
+  // a no-op here so closeModal() can always call it safely regardless of
+  // definition order.
+  var resetCertZoom = function () {};
 
   function getFocusable(container) {
     return Array.prototype.slice.call(
@@ -366,6 +403,7 @@
       var thisRequestId = certRequestId;
 
       // Reset immediately — the previous certificate must never linger.
+      resetCertZoom();
       certModalImg.removeAttribute('src');
       certModalImg.alt = '';
       certModalTitle.textContent = title;
@@ -379,6 +417,226 @@
 
   if (certModalClose) {
     certModalClose.addEventListener('click', function () { closeModal(certModal); });
+  }
+
+  /* ---------------------------------------------------------
+     Certificate zoom (pan + zoom inside the existing modal)
+
+     - Desktop: mouse wheel to zoom (centered on the cursor),
+       double-click to toggle, drag to pan once zoomed in.
+     - Mobile: pinch to zoom (centered on the pinch midpoint),
+       double-tap to toggle, drag to pan once zoomed in.
+     - Small +/− /reset controls cover keyboard & discoverability
+       on both platforms.
+     - Pan is always clamped to the image's own scaled bounds, and
+       .cert-modal-media clips overflow, so a zoomed/panned image
+       can never push the modal — or the page — wider than the
+       viewport.
+     - State resets whenever a certificate is opened or the modal
+       closes (see closeModal() above and the click handler above).
+  --------------------------------------------------------- */
+  var certMedia = document.getElementById('certModalMedia');
+  var certZoomIn = document.getElementById('certZoomIn');
+  var certZoomOut = document.getElementById('certZoomOut');
+  var certZoomReset = document.getElementById('certZoomReset');
+
+  if (certMedia && certModalImg && certZoomIn && certZoomOut && certZoomReset) {
+    var ZOOM_MIN = 1;
+    var ZOOM_MAX = 4;
+    var ZOOM_STEP = 0.6;
+    var DOUBLE_TAP_SCALE = 2.2;
+    var DOUBLE_TAP_MS = 320;
+    var DOUBLE_TAP_SLOP = 24;
+
+    var zoomState = { scale: 1, tx: 0, ty: 0 };
+    var activePointers = new Map(); // pointerId -> {x, y}
+    var pinchStartDist = 0;
+    var pinchStartScale = 1;
+    var isPanning = false;
+    var panStart = null; // {x, y, tx, ty}
+    var lastTapTime = 0;
+    var lastTapPos = null;
+
+    function clampNum(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    // Keeps the (scaled) image from panning further than its own edge —
+    // this is what guarantees the zoomed image stays fully contained
+    // inside the modal no matter how far the user tries to drag it.
+    function clampPan(scale, tx, ty) {
+      var baseW = certModalImg.offsetWidth;
+      var baseH = certModalImg.offsetHeight;
+      var containerW = certMedia.clientWidth;
+      var containerH = certMedia.clientHeight;
+      var maxX = Math.max(0, (baseW * scale - containerW) / 2);
+      var maxY = Math.max(0, (baseH * scale - containerH) / 2);
+      return { x: clampNum(tx, -maxX, maxX), y: clampNum(ty, -maxY, maxY) };
+    }
+
+    function applyTransform(animated) {
+      certModalImg.classList.toggle('is-zoom-animated', !!animated);
+      certModalImg.style.transform =
+        'translate(' + zoomState.tx + 'px, ' + zoomState.ty + 'px) scale(' + zoomState.scale + ')';
+      certModalImg.classList.toggle('is-zoomed', zoomState.scale > 1.001);
+
+      var pct = Math.round(zoomState.scale * 100);
+      certZoomReset.textContent = pct + '%';
+      var atMin = zoomState.scale <= ZOOM_MIN + 0.001;
+      certZoomOut.disabled = atMin;
+      certZoomReset.disabled = atMin;
+      certZoomIn.disabled = zoomState.scale >= ZOOM_MAX - 0.001;
+    }
+
+    // originX/originY (viewport coordinates) let wheel/pinch/double-click
+    // zoom toward the cursor or touch point instead of always the center.
+    function setZoom(newScale, originX, originY, animated) {
+      newScale = clampNum(newScale, ZOOM_MIN, ZOOM_MAX);
+      var oldScale = zoomState.scale;
+
+      var containerRect = certMedia.getBoundingClientRect();
+      var cx = (typeof originX === 'number') ? originX - (containerRect.left + containerRect.width / 2) : 0;
+      var cy = (typeof originY === 'number') ? originY - (containerRect.top + containerRect.height / 2) : 0;
+
+      var ratio = newScale / oldScale;
+      var newTx = (zoomState.tx - cx) * ratio + cx;
+      var newTy = (zoomState.ty - cy) * ratio + cy;
+
+      if (newScale <= ZOOM_MIN + 0.001) { newTx = 0; newTy = 0; }
+
+      zoomState.scale = newScale;
+      var clamped = clampPan(newScale, newTx, newTy);
+      zoomState.tx = clamped.x;
+      zoomState.ty = clamped.y;
+      applyTransform(animated !== false);
+    }
+
+    resetCertZoom = function () {
+      zoomState.scale = 1; zoomState.tx = 0; zoomState.ty = 0;
+      activePointers.clear();
+      isPanning = false; panStart = null;
+      pinchStartDist = 0;
+      applyTransform(false);
+    };
+
+    certZoomIn.addEventListener('click', function () { setZoom(zoomState.scale + ZOOM_STEP); });
+    certZoomOut.addEventListener('click', function () { setZoom(zoomState.scale - ZOOM_STEP); });
+    certZoomReset.addEventListener('click', function () { setZoom(ZOOM_MIN); });
+
+    // ---- Desktop: mouse wheel to zoom ----
+    certMedia.addEventListener('wheel', function (e) {
+      if (certModalEl && (certModalEl.classList.contains('is-loading') || certModalEl.classList.contains('is-error'))) return;
+      e.preventDefault();
+      var delta = e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP;
+      setZoom(zoomState.scale + delta, e.clientX, e.clientY);
+    }, { passive: false });
+
+    // ---- Desktop: double-click to toggle zoom ----
+    certModalImg.addEventListener('dblclick', function (e) {
+      if (zoomState.scale > 1.001) {
+        setZoom(ZOOM_MIN);
+      } else {
+        setZoom(DOUBLE_TAP_SCALE, e.clientX, e.clientY);
+      }
+    });
+
+    // ---- Shared pointer handling: drag-to-pan (mouse or single touch)
+    //      and pinch-to-zoom (two touches) via the Pointer Events API ----
+    function pointerDistance() {
+      var pts = Array.from(activePointers.values());
+      var dx = pts[0].x - pts[1].x;
+      var dy = pts[0].y - pts[1].y;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+    function pointerMidpoint() {
+      var pts = Array.from(activePointers.values());
+      return { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+    }
+
+    certModalImg.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      try { certModalImg.setPointerCapture(e.pointerId); } catch (err) {}
+
+      if (activePointers.size === 2) {
+        isPanning = false;
+        pinchStartDist = pointerDistance();
+        pinchStartScale = zoomState.scale;
+        return;
+      }
+
+      if (activePointers.size === 1) {
+        if (e.pointerType === 'touch') {
+          var now = Date.now();
+          if (lastTapPos && (now - lastTapTime) < DOUBLE_TAP_MS &&
+              Math.abs(e.clientX - lastTapPos.x) < DOUBLE_TAP_SLOP &&
+              Math.abs(e.clientY - lastTapPos.y) < DOUBLE_TAP_SLOP) {
+            if (zoomState.scale > 1.001) {
+              setZoom(ZOOM_MIN);
+            } else {
+              setZoom(DOUBLE_TAP_SCALE, e.clientX, e.clientY);
+            }
+            lastTapTime = 0;
+            lastTapPos = null;
+            return;
+          }
+          lastTapTime = now;
+          lastTapPos = { x: e.clientX, y: e.clientY };
+        }
+
+        if (zoomState.scale > 1.001) {
+          isPanning = true;
+          panStart = { x: e.clientX, y: e.clientY, tx: zoomState.tx, ty: zoomState.ty };
+        }
+      }
+    });
+
+    certModalImg.addEventListener('pointermove', function (e) {
+      if (!activePointers.has(e.pointerId)) return;
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (activePointers.size === 2) {
+        var dist = pointerDistance();
+        if (pinchStartDist > 0) {
+          var mid = pointerMidpoint();
+          var newScale = clampNum(pinchStartScale * (dist / pinchStartDist), ZOOM_MIN, ZOOM_MAX);
+          setZoom(newScale, mid.x, mid.y, false);
+        }
+        return;
+      }
+
+      if (isPanning && panStart) {
+        certModalImg.classList.add('is-panning');
+        var dx = e.clientX - panStart.x;
+        var dy = e.clientY - panStart.y;
+        var clamped = clampPan(zoomState.scale, panStart.tx + dx, panStart.ty + dy);
+        zoomState.tx = clamped.x;
+        zoomState.ty = clamped.y;
+        applyTransform(false);
+      }
+    });
+
+    function endPointer(e) {
+      activePointers.delete(e.pointerId);
+      certModalImg.classList.remove('is-panning');
+      if (activePointers.size < 2) pinchStartDist = 0;
+      if (activePointers.size === 0) { isPanning = false; panStart = null; }
+    }
+    certModalImg.addEventListener('pointerup', endPointer);
+    certModalImg.addEventListener('pointercancel', endPointer);
+    certModalImg.addEventListener('pointerleave', function (e) {
+      if (e.pointerType === 'mouse' && activePointers.has(e.pointerId) && activePointers.size < 2 && !isPanning) {
+        endPointer(e);
+      }
+    });
+
+    // Re-clamp on viewport/orientation changes so a zoomed image never
+    // ends up parked outside the (now different-sized) modal bounds.
+    window.addEventListener('resize', function () {
+      if (zoomState.scale <= ZOOM_MIN + 0.001) return;
+      var clamped = clampPan(zoomState.scale, zoomState.tx, zoomState.ty);
+      zoomState.tx = clamped.x;
+      zoomState.ty = clamped.y;
+      applyTransform(false);
+    });
   }
 
 })();
