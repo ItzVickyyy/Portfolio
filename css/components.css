@@ -427,15 +427,18 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .hero-photo-wrap{ width:min(62%, 260px); }
 }
 
-/* ---- Compact mobile identity row (avatar + kicker) ----
-   Hidden by default (desktop/tablet just see the kicker, unwrapped via
-   display:contents so it behaves exactly as before); becomes the mobile
-   hero's opening beat at <=480px, replacing the big centered photo. */
+/* ---- Compact mobile/tablet identity row (avatar + kicker) ----
+   Hidden by default (desktop just sees the kicker, unwrapped via
+   display:contents so it behaves exactly as before); becomes the
+   hero's opening beat at <=768px, replacing the big centered photo.
+   The same composition now spans phone through tablet (768px) — only
+   the clamp()'d sizing grows between those widths, the layout itself
+   doesn't change again until the true desktop breakpoint above. */
 .hero-identity{ display:contents; }
 .hero-avatar{ display:none; }
 
-@media (max-width:480px){
-  .hero{ padding-top:calc(var(--nav-h) + 18px); }
+@media (max-width:768px){
+  .hero{ padding-top:calc(var(--nav-h) + clamp(18px, 4vw, 30px)); }
   .hero .container{ gap:0; }
   .hero-copy{ min-width:0; }
 
@@ -444,12 +447,13 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .hero-identity{
     display:flex;
     align-items:center;
-    gap:10px;
-    margin-bottom:16px;
+    gap:clamp(10px, 1.8vw, 14px);
+    margin-bottom:clamp(16px, 2.9vw, 22px);
   }
   .hero-avatar{
     display:block;
-    width:44px; height:44px;
+    width:clamp(44px, 7.8vw, 60px);
+    height:clamp(44px, 7.8vw, 60px);
     border-radius:50%;
     overflow:hidden;
     flex-shrink:0;
@@ -459,39 +463,39 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .hero-avatar img{ width:100%; height:100%; object-fit:cover; filter:grayscale(.15); }
   .hero-kicker{
     margin-bottom:0;
-    padding:6px 12px 6px 6px;
-    font-size:.7rem;
+    padding:clamp(6px, 1.2vw, 9px) clamp(12px, 2.2vw, 17px) clamp(6px, 1.2vw, 9px) clamp(6px, 1.2vw, 9px);
+    font-size:clamp(.7rem, 1.8vw, .85rem);
     flex:1 1 auto;
     min-width:0;
     white-space:normal;
   }
   .hero-kicker span:not(.dot-live){ overflow-wrap:break-word; }
 
-  .hero-title{ font-size:clamp(1.7rem, 1.1rem + 5vw, 2.2rem); text-align:left; margin-bottom:10px; }
-  .hero-lede{ text-align:left; margin-inline:0; margin-bottom:18px; font-size:.88rem; }
+  .hero-title{ font-size:clamp(1.7rem, 5.4vw, 2.6rem); text-align:left; margin-bottom:clamp(10px, 1.8vw, 16px); }
+  .hero-lede{ text-align:left; margin-inline:0; margin-bottom:clamp(18px, 3.1vw, 24px); font-size:clamp(.88rem, 2.1vw, 1rem); }
 
   .hero-cta{
     width:100%;
-    gap:10px;
+    gap:clamp(10px, 1.8vw, 14px);
     flex-direction:row;
     flex-wrap:nowrap;
     justify-content:flex-start;
-    margin-bottom:22px;
+    margin-bottom:clamp(22px, 3.9vw, 30px);
   }
   .hero-cta .btn{
     flex:1 1 0;
     white-space:normal;
     text-align:center;
-    padding:12px 10px;
-    font-size:.78rem;
+    padding:clamp(12px, 2.1vw, 16px) clamp(10px, 2.1vw, 16px);
+    font-size:clamp(.78rem, 1.9vw, .92rem);
   }
 
   /* Compact 3-column stat grid — all three visible at once, no scrolling.
      Sizing/padding/type still come from the shared ≤980px card rules
-     above (they scale down via clamp); this just lets the row go full
-     width instead of capping at the tablet max-width. */
+     above (they scale up via clamp); this just lets the row go full
+     width instead of capping at the desktop-tablet max-width. */
   .hero-stats{
-    gap:8px;
+    gap:clamp(8px, 1.8vw, 14px);
     margin-inline:0;
     max-width:none;
   }
