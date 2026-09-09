@@ -21,7 +21,7 @@
   justify-content:space-between;
   gap:6px;
   padding:8px 8px 8px 22px;
-  border-radius:var(--radius-pill);
+  border-radius:20px;
   background:rgba(18,17,16,.72);
   border:1px solid rgba(255,255,255,.08);
   backdrop-filter:blur(16px);
@@ -62,7 +62,7 @@ html[data-theme="light"] .navbar{
   align-items:center;
   justify-content:center;
   padding:10px 13px;
-  border-radius:var(--radius-pill);
+  border-radius:12px;
   font-size:.86rem;
   font-weight:600;
   color:var(--text-muted);
@@ -73,6 +73,7 @@ html[data-theme="light"] .navbar{
 .nav-links a.active{
   background:var(--accent-gradient);
   color:#fff;
+  border-radius:12px;
 }
 
 .nav-actions{
@@ -81,9 +82,21 @@ html[data-theme="light"] .navbar{
   gap:10px;
 }
 
+.nav-cta{
+  padding:10px 18px;
+  gap:8px;
+  border-radius:12px;
+}
+.nav-cta svg{ width:16px; height:16px; flex-shrink:0; }
+
+@media (max-width:560px){
+  .nav-cta{ padding:10px 12px; gap:6px; }
+  .nav-cta-label{ display:none; }
+}
+
 .theme-toggle{
   width:44px; height:44px;
-  border-radius:50%;
+  border-radius:14px;
   border:1px solid var(--surface-border);
   background:var(--bg-elevated-2);
   display:flex; align-items:center; justify-content:center;
@@ -91,7 +104,41 @@ html[data-theme="light"] .navbar{
   flex-shrink:0;
   transition:transform .3s var(--ease), border-color .3s;
 }
-.theme-toggle:hover{ border-color:var(--accent-400); transform:rotate(15deg); }
+.theme-toggle:hover{ border-color:var(--accent-400); }
+.theme-toggle:active{ transform:scale(.92); }
+.theme-toggle svg{ transition:transform .3s var(--ease); }
+.theme-toggle:hover svg{ transform:rotate(15deg); }
+.theme-toggle:active svg{ transform:rotate(15deg) scale(.9); }
+
+/* ==========================================================================
+   THEME TRANSITION
+   Primary path: native View Transitions circular reveal (see main.js) —
+   the browser snapshots old/new states itself, so the reveal is always
+   pixel-accurate, however many elements changed color.
+   Fallback path (no View Transitions support): the .theme-crossfade class
+   is applied to <html> for the duration of the switch, forcing every
+   element to smoothly crossfade its color/background instead of snapping.
+   Both paths are skipped entirely under prefers-reduced-motion (handled
+   globally in base.css).
+   ========================================================================== */
+::view-transition-old(root),
+::view-transition-new(root){
+  animation:none;
+  mix-blend-mode:normal;
+}
+::view-transition-old(root){ z-index:1; }
+::view-transition-new(root){ z-index:2; }
+html.theme-switching::view-transition-new(root){
+  will-change:clip-path;
+}
+
+.theme-crossfade,
+.theme-crossfade *{
+  transition:background-color .4s var(--ease), border-color .4s var(--ease),
+             color .4s var(--ease), box-shadow .4s var(--ease),
+             fill .4s var(--ease), stroke .4s var(--ease) !important;
+}
+
 .theme-toggle svg{ width:19px; height:19px; }
 .theme-toggle .icon-moon{ display:none; }
 html[data-theme="light"] .theme-toggle .icon-sun{ display:none; }
@@ -100,7 +147,7 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 .nav-toggle{
   display:none;
   width:44px; height:44px;
-  border-radius:50%;
+  border-radius:14px;
   border:1px solid var(--surface-border);
   background:var(--bg-elevated-2);
   align-items:center;
@@ -214,6 +261,10 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
    ========================================================================== */
 .hero{
   position:relative;
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  align-items:center;
   padding:calc(var(--nav-h) + 50px) 0 clamp(40px, 8vw, 80px);
   overflow:hidden;
 }
@@ -242,45 +293,11 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   align-items:center;
 }
 
-.hero-kicker{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  font-family:var(--font-mono);
-  font-size:clamp(.72rem, .66rem + .3vw, .85rem);
-  color:var(--text-muted);
-  background:var(--bg-elevated);
-  border:1px solid var(--surface-border);
-  padding:7px 14px 7px 7px;
-  border-radius:var(--radius-pill);
-  margin-bottom:16px;
-  max-width:100%;
-}
-.hero-kicker .dot-live{
-  width:8px;height:8px;border-radius:50%;
-  background:#39d98a;
-  box-shadow:0 0 0 0 rgba(57,217,138,.6);
-  animation:pulse 2s infinite;
-}
-@keyframes pulse{
-  0%{ box-shadow:0 0 0 0 rgba(57,217,138,.55); }
-  70%{ box-shadow:0 0 0 8px rgba(57,217,138,0); }
-  100%{ box-shadow:0 0 0 0 rgba(57,217,138,0); }
-}
-
 .hero-title{
   font-size:clamp(2.1rem, 1.35rem + 5.5vw, 4.1rem);
   line-height:1.08;
   margin-bottom:14px;
 }
-.hero-title .cursor{
-  display:inline-block;
-  width:.5ch;
-  background:var(--accent-500);
-  animation:blink 1s step-end infinite;
-}
-@keyframes blink{ 50%{ opacity:0; } }
-
 .hero-lede{
   color:var(--text-muted);
   font-size:clamp(.92rem, .85rem + .4vw, 1.08rem);
@@ -347,34 +364,47 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 }
 .hero-photo-wrap{
   position:relative;
-  width:min(100%, 400px);
-  aspect-ratio:1/1.1;
+  width:min(100%, 460px);
+  /* Matches the source cutout's own aspect ratio (422 × 765) so the
+     full-body portrait sits in frame with no crop and no clipping. */
+  aspect-ratio:422/765;
 }
-.hero-photo-glow{
-  position:absolute;
-  inset:-10%;
-  background:radial-gradient(circle at 50% 40%, rgba(253,111,0,.35), transparent 65%);
-  filter:blur(10px);
-  z-index:0;
+.hero-photo-glow {
+  position: absolute;
+  width: min(620px, 125vw);
+  aspect-ratio: 1;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(226, 35, 26, 0.35),
+    transparent 65%
+  );
+  filter: blur(10px);
+  z-index: 0;
 }
+
 .hero-photo{
-  position:relative;
-  z-index:1;
-  width:100%;
-  height:100%;
-  border-radius:46% 46% 42% 42% / 52% 52% 40% 40%;
-  overflow:hidden;
-  border:1px solid var(--surface-border);
-  background:var(--bg-elevated);
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  background:transparent;
 }
 .hero-photo img{
-  width:100%; height:100%;
-  object-fit:cover;
-  filter:grayscale(.15);
+  width:100%;
+  height:100%;
+  max-width:none;
+  object-fit:contain;
 }
+
 .hero-badge{
   position:absolute;
-  z-index:2;
+  z-index:3;
   background:var(--bg-elevated);
   border:1px solid var(--surface-border);
   border-radius:var(--radius-md);
@@ -427,13 +457,10 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .hero-photo-wrap{ width:min(62%, 260px); }
 }
 
-/* ---- Compact mobile/tablet identity row (avatar + kicker) ----
-   Hidden by default (desktop just sees the kicker, unwrapped via
-   display:contents so it behaves exactly as before); becomes the
-   hero's opening beat at <=768px, replacing the big centered photo.
-   The same composition now spans phone through tablet (768px) — only
-   the clamp()'d sizing grows between those widths, the layout itself
-   doesn't change again until the true desktop breakpoint above. */
+/* ---- Compact mobile identity avatar ----
+   The avatar lives only in the mobile/tablet hero (<=768px), where it
+   opens the composition before the headline. Hidden on desktop, where
+   the big hero photo already provides the visual identity. */
 .hero-identity{ display:contents; }
 .hero-avatar{ display:none; }
 
@@ -442,7 +469,7 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .hero .container{ gap:0; }
   .hero-copy{ min-width:0; }
 
-  /* Recompose: compact avatar+kicker row up top, big photo hidden entirely */
+  /* Recompose: compact avatar row up top, big photo hidden entirely */
   .hero-visual{ display:none; }
   .hero-identity{
     display:flex;
@@ -461,15 +488,6 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
     background:var(--bg-elevated);
   }
   .hero-avatar img{ width:100%; height:100%; object-fit:cover; filter:grayscale(.15); }
-  .hero-kicker{
-    margin-bottom:0;
-    padding:clamp(6px, 1.2vw, 9px) clamp(12px, 2.2vw, 17px) clamp(6px, 1.2vw, 9px) clamp(6px, 1.2vw, 9px);
-    font-size:clamp(.7rem, 1.8vw, .85rem);
-    flex:1 1 auto;
-    min-width:0;
-    white-space:normal;
-  }
-  .hero-kicker span:not(.dot-live){ overflow-wrap:break-word; }
 
   .hero-title{ font-size:clamp(1.7rem, 5.4vw, 2.6rem); text-align:left; margin-bottom:clamp(10px, 1.8vw, 16px); }
   .hero-lede{ text-align:left; margin-inline:0; margin-bottom:clamp(18px, 3.1vw, 24px); font-size:clamp(.88rem, 2.1vw, 1rem); }
@@ -502,15 +520,58 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 }
 
 /* ==========================================================================
-   ABOUT
+   ABOUT — bento layout
    ========================================================================== */
 .about .container{
-  display:grid;
-  grid-template-columns:.85fr 1.15fr;
-  gap:48px;
-  align-items:center;
+  display:block;
 }
-.about-media{ position:relative; }
+
+/* Name + tagline sit together as the bio card's own header row —
+   name on the left, tagline right-aligned on the same line.
+   Matches Figma: Urbanist 800/31.2px name, Urbanist 700/21.12px
+   muted tagline, top-aligned with a slight downward nudge on the
+   tagline to optically match cap-heights. */
+.about-card-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px 24px;
+  margin-bottom:18px;
+}
+.about-name{
+  margin:0;
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:clamp(1.4rem, 1.1rem + 1.5vw, 1.95rem);
+  letter-spacing:-.01em;
+  line-height:1.15;
+  max-width:none;
+}
+.about-tagline{
+  margin:.2em 0 0;
+  text-align:right;
+  font-family:var(--font-display);
+  font-weight:700;
+  color:var(--text-muted);
+  font-size:clamp(1rem, .85rem + .8vw, 1.32rem);
+  letter-spacing:-.01em;
+  line-height:1.25;
+  white-space:nowrap;
+}
+
+.about-bento{
+  display:grid;
+  grid-template-columns:minmax(230px, 30%) 1.5fr 1fr;
+  grid-auto-rows:min-content;
+  gap:20px;
+}
+
+.about-bento-picture{
+  grid-column:1;
+  grid-row:1 / 3;
+  position:relative;
+}
 .about-photo{
   border-radius:var(--radius-lg);
   overflow:hidden;
@@ -529,116 +590,233 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   font-size:.8rem;
   box-shadow:var(--shadow-soft);
 }
+.about-bento-picture .about-photo{
+  height:100%;
+  aspect-ratio:auto;
+}
 
-.about-copy p{
+/* Extra bottom padding makes room for the docked Resume/CV control
+   (see .about-dock) so body copy never runs under it. */
+.about-bento-text{
+  grid-column:2 / 4;
+  grid-row:1;
+  padding:clamp(24px, 3vw, 34px) clamp(24px, 3vw, 34px) clamp(40px, 5vw, 52px);
+  position:relative;
+}
+.about-bento-capabilities{ grid-column:2; grid-row:2; padding:clamp(22px, 2.6vw, 30px); }
+.about-bento-contact{ grid-column:3; grid-row:2; padding:clamp(22px, 2.6vw, 30px); }
+.about-bento-toolbelt{ grid-column:1 / -1; grid-row:3; padding:clamp(20px, 3vw, 28px); }
+
+.about-card-title{
+  font-size:clamp(1.1rem, 1rem + .4vw, 1.32rem);
+  margin-bottom:14px;
+  line-height:1.25;
+}
+
+/* ---- Panel frame: fieldset/legend-style border-integrated label ----
+   Used on secondary About cards (Capabilities, Contact Me, Tool Belt).
+   The label is NOT card content — it's a structural piece of the frame
+   that sits on top of the border and visually interrupts it, like a
+   <fieldset>/<legend> or a labeled control-panel module. ---- */
+.panel{
+  position:relative;
+}
+.panel-label{
+  position:absolute;
+  top:0;
+  left:clamp(18px, 2.4vw, 28px);
+  transform:translateY(-50%);
+  margin:0;
+  padding:0 10px;
+  background:var(--surface);
+  font-family:var(--font-mono);
+  font-size:clamp(.72rem, .68rem + .15vw, .78rem);
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--accent-400);
+  line-height:1.4;
+  white-space:nowrap;
+  pointer-events:none;
+  border-radius: 20px;
+}
+
+.about-bento-text p{
   color:var(--text-muted);
   margin-bottom:14px;
-  font-size:clamp(.92rem, .87rem + .3vw, 1.02rem);
+  font-size:clamp(.9rem, .86rem + .2vw, .98rem);
 }
-.about-copy p:last-of-type{ margin-bottom:20px; }
+.about-bento-text p:last-of-type{ margin-bottom:8px; }
 
-.about-facts{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-top:20px;
-}
-.about-fact{
-  padding:14px 16px;
-  border-radius:var(--radius-sm);
-  border:1px solid var(--surface-border);
-  background:var(--bg-elevated);
-  min-width:0;
-}
-.about-fact dt{
-  font-family:var(--font-mono);
-  font-size:.7rem;
-  text-transform:uppercase;
-  letter-spacing:.06em;
-  color:var(--accent-400);
-  margin-bottom:6px;
-}
-.about-fact dd{
-  margin:0;
+.about-bento-text .accent-highlight,
+.about-bento-contact .accent-highlight{
   font-weight:700;
-  font-size:clamp(.86rem, .82rem + .2vw, .95rem);
-  overflow-wrap:break-word;
+  color:var(--accent-400);
 }
 
-@media (max-width:900px){
-  .about .container{ grid-template-columns:1fr; gap:32px; }
-  .about-media{ max-width:360px; margin:0 auto; }
-}
-@media (max-width:480px){
-  .about .container{ gap:22px; }
-  .about-media{ max-width:220px; }
-  .about-photo-tag{ font-size:.7rem; padding:8px 12px; bottom:12px; left:12px; }
-  .about-copy p{ margin-bottom:10px; font-size:.86rem; }
-  .about-copy p:last-of-type{ margin-bottom:16px; }
-  .about-facts{ grid-template-columns:1fr 1fr; gap:8px; margin-top:16px; }
-  .about-fact{ padding:10px 12px; }
-}
-
-/* ==========================================================================
-   CAPABILITIES ("services" reframed)
-   ========================================================================== */
-.capabilities-grid{
-  display:grid;
-  grid-template-columns:repeat(3, 1fr);
-  gap:20px;
-}
-.capability-card{
-  padding:26px 22px;
-  position:relative;
+/* ---- Docked Resume/CV control ----
+   Matches Figma exactly: a joined pill nested into the bio card's
+   own bottom-right corner — flush with the padding edge (right:0;
+   bottom:0), not straddling the border. Its bottom-right radius
+   (16px) matches the card's own corner so it reads as fused to it,
+   while the other three corners stay tighter (8px). */
+.about-dock{
+  position:absolute;
+  right:0;
+  bottom:0;
+  display:flex;
+  background:var(--surface);
+  border:1px solid var(--surface-border);
+  border-radius:8px 8px 16px 8px;
+  box-shadow:var(--shadow-soft);
   overflow:hidden;
 }
-.capability-card:hover{
-  transform:translateY(-6px);
-  border-color:var(--accent-400);
-  box-shadow:var(--shadow-soft);
+.about-dock-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px;
+  font-family:var(--font-mono);
+  font-size:.74rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  color:var(--text-muted);
+  transition:color .2s var(--ease), background .2s var(--ease);
+  white-space:nowrap;
 }
-.capability-icon{
-  width:52px; height:52px;
-  border-radius:14px;
-  background:var(--accent-gradient);
-  display:flex; align-items:center; justify-content:center;
-  margin-bottom:16px;
-  flex-shrink:0;
-}
-.capability-icon svg{ width:26px; height:26px; color:#fff; }
-.capability-card h3{ font-size:clamp(1rem, .93rem + .3vw, 1.15rem); margin-bottom:8px; line-height:1.3; }
-.capability-card p{ color:var(--text-muted); font-size:clamp(.86rem, .82rem + .15vw, .92rem); line-height:1.55; }
+.about-dock-btn:not(:last-child){ border-right:1px solid var(--surface-border); }
+.about-dock-btn:hover{ color:var(--accent-400); background:var(--bg-elevated-2); }
+.about-dock-btn svg{ width:14px; height:14px; flex-shrink:0; }
 
-@media (max-width:860px){
-  .capabilities-grid{ grid-template-columns:1fr 1fr; gap:16px; }
+.capabilities-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  padding-bottom:16px;
+  margin-bottom:16px;
+  border-bottom:1px solid var(--surface-border);
 }
-@media (max-width:560px){
-  .capability-card{ display:flex; flex-direction:column; }
-  .capability-icon{ width:42px; height:42px; border-radius:12px; margin-bottom:12px; }
-  .capability-icon svg{ width:22px; height:22px; }
+.cap-tab{
+  width:40px; height:40px;
+  border-radius:12px;
+  border:1px solid var(--surface-border);
+  background:var(--bg-elevated);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text-muted);
+  cursor:pointer;
+  flex-shrink:0;
+  transition:background .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease), transform .25s var(--ease);
+}
+.cap-tab svg{ width:19px; height:19px; }
+.cap-tab:hover{ border-color:var(--accent-400); color:var(--accent-400); transform:translateY(-2px); }
+.cap-tab.is-active{
+  background:var(--accent-gradient);
+  border-color:transparent;
+  color:#fff;
+}
+.cap-panel-title{
+  font-size:clamp(.98rem, .92rem + .2vw, 1.05rem);
+  font-weight:700;
+  margin-bottom:8px;
+}
+.cap-panel-desc{
+  color:var(--text-muted);
+  font-size:.88rem;
+  line-height:1.6;
+  margin:0;
+}
+
+.about-contact-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:10px;
+}
+.about-contact-link{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  aspect-ratio:9 / 5;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--surface-border);
+  background:var(--bg-elevated);
+  color:var(--text);
+  cursor:pointer;
+  transition:border-color .3s var(--ease), transform .3s var(--ease), color .3s var(--ease);
+}
+.about-contact-link svg{ width:28px; height:28px; flex-shrink:0; }
+.about-contact-link:hover{ border-color:var(--accent-400); color:var(--accent-400); transform:translateY(-2px); }
+
+.toolbelt-marquee{
+  overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.toolbelt-track{
+  display:flex;
+  gap:14px;
+  width:max-content;
+  animation:toolbelt-scroll var(--toolbelt-duration, 24s) linear infinite;
+  will-change:transform;
+}
+.toolbelt-marquee:hover .toolbelt-track{ animation-play-state:paused; }
+@keyframes toolbelt-scroll{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(var(--toolbelt-distance, -50%)); }
+}
+.toolbelt-tile{
+  flex:0 0 auto;
+  width:60px;
+  height:60px;
+  border-radius:var(--radius-sm);
+  border:1px solid var(--surface-border);
+  background:var(--bg-elevated-2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:border-color .3s var(--ease), transform .3s var(--ease);
+}
+.toolbelt-tile:hover{ border-color:var(--accent-400); transform:translateY(-3px); }
+.toolbelt-icon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  color:var(--text-faint);
+  transition:color .3s var(--ease);
+}
+.toolbelt-icon svg{ width:100%; height:100%; display:block; }
+.toolbelt-tile:hover .toolbelt-icon{ color:var(--accent-400); }
+
+@media (max-width:900px){
+  .about-bento{ grid-template-columns:1fr; }
+  .about-bento-picture{ grid-column:1; grid-row:auto; max-width:360px; margin:0 auto; }
+  .about-bento-picture .about-photo{ aspect-ratio:4/5; height:auto; }
+  .about-card-header{ flex-direction:column; align-items:flex-start; gap:4px; }
+  .about-tagline{ text-align:left; }
+  .about-bento-text{ grid-column:1; grid-row:auto; }
+  .about-bento-capabilities{ grid-column:1; grid-row:auto; }
+  .about-bento-contact{ grid-column:1; grid-row:auto; }
+  .about-bento-toolbelt{ grid-column:1; grid-row:auto; }
 }
 @media (max-width:480px){
-  /* Horizontal-scroll carousel instead of a tall stacked column */
-  .capabilities-grid{
-    display:flex;
-    grid-template-columns:none;
-    overflow-x:auto;
-    scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-    gap:12px;
-    margin:0 -4px;
-    padding:2px 4px 6px;
-  }
-  .capabilities-grid::-webkit-scrollbar{ display:none; }
-  .capability-card{
-    flex:0 0 78%;
-    scroll-snap-align:start;
-    padding:18px 16px;
-  }
-}
-@media (max-width:380px){
-  .capability-card{ flex-basis:84%; }
+  .about-bento{ gap:14px; }
+  .about-bento-picture{ max-width:220px; }
+  .about-photo-tag{ font-size:.7rem; padding:8px 12px; bottom:12px; left:12px; }
+  .about-bento-text{ padding:20px; padding-bottom:38px; }
+  .about-bento-capabilities{ padding:20px; }
+  .about-bento-contact{ padding:20px; }
+  .about-bento-text p{ margin-bottom:10px; font-size:.86rem; }
+  .about-bento-text p:last-of-type{ margin-bottom:8px; }
+  .about-dock-btn{ padding:7px 11px; font-size:.7rem; }
+  .about-contact-grid{ gap:8px; }
+  .about-contact-link{ aspect-ratio:9 / 5; }
+  .about-contact-link svg{ width:24px; height:24px; }
+  .toolbelt-tile{ width:52px; height:52px; }
 }
 
 /* ==========================================================================
@@ -684,7 +862,7 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   align-items:center;
   padding:4px 14px;
   border-radius:999px;
-  background:var(--accent-100, rgba(253,111,0,.12));
+  background:var(--accent-100, rgba(226,35,26,.12));
   color:var(--accent-400);
   font-size:.74rem;
   font-weight:700;
@@ -711,8 +889,7 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 }
 
 /* ==========================================================================
-   MY SERVICES — freelance offerings (distinct from the capabilities grid:
-   two wide "pillar" cards instead of a grid of small icon cards)
+   MY SERVICES — freelance offerings, shown as two wide "pillar" cards
    ========================================================================== */
 .services-grid{
   display:grid;
@@ -812,8 +989,8 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   font-weight:600;
   padding:5px 12px;
   border-radius:var(--radius-pill);
-  background:rgba(253,111,0,.08);
-  border:1px solid rgba(253,111,0,.3);
+  background:rgba(226,35,26,.08);
+  border:1px solid rgba(226,35,26,.3);
   color:var(--accent-400);
 }
 
@@ -917,126 +1094,182 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 }
 
 /* ==========================================================================
-   PROJECTS
+   PROJECTS — overlapping thumbnail gallery
    ========================================================================== */
-.filter-bar{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-bottom:32px;
+/* Overrides the shared .section-head's centered layout for this section
+   only — eyebrow/title/description left-aligned, "View More Projects"
+   pinned top-right, matching a selected-work header treatment. Every
+   other section keeps the default centered .section-head untouched. */
+.section-head-split{
+  align-items:stretch;
+  text-align:left;
 }
-.filter-btn{
-  padding:9px 18px;
-  border-radius:var(--radius-pill);
-  border:1px solid var(--surface-border);
-  background:var(--bg-elevated);
-  color:var(--text-muted);
-  font-size:clamp(.78rem, .74rem + .2vw, .86rem);
-  font-weight:600;
-  transition:all .25s var(--ease);
-}
-.filter-btn:hover{ color:var(--text); }
-.filter-btn.active{
-  background:var(--accent-gradient);
-  color:#fff;
-  border-color:transparent;
-}
-
-.projects-grid{
-  display:grid;
-  grid-template-columns:repeat(2, 1fr);
-  gap:24px;
-}
-.project-card{
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-}
-.project-card:hover{ transform:translateY(-6px); border-color:var(--accent-400); box-shadow:var(--shadow-soft); }
-.project-media{
-  aspect-ratio:16/10;
-  background:var(--bg-elevated-2);
-  position:relative;
-  overflow:hidden;
-  border-bottom:1px solid var(--surface-border);
-}
-.project-media .project-glyph{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-family:var(--font-mono);
-  color:var(--text-faint);
-  font-size:.8rem;
-  letter-spacing:.05em;
-  text-align:center;
-  padding:20px;
-}
-.project-body{
-  padding:22px 24px 24px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  flex:1;
-}
-.project-top{
+.projects-header{
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
-  gap:12px;
+  gap:20px;
+  width:100%;
+  margin-bottom:40px;
 }
-.project-top h3{ font-size:clamp(1.02rem, .95rem + .3vw, 1.2rem); line-height:1.3; }
-.project-year{
+.projects-header-text{
+  max-width:560px;
+}
+
+/* Compact white pill CTA — stays light on both themes, like a floating chip */
+.btn-projects-more{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  flex-shrink:0;
+  margin-top:4px;
+  padding:10px 18px;
+  border-radius:var(--radius-pill);
+  background:#fdfdfc;
+  color:#171412;
+  font-family:var(--font-body);
+  font-size:.82rem;
+  font-weight:700;
+  white-space:nowrap;
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 10px 24px -12px rgba(0,0,0,.45);
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.btn-projects-more:hover{ transform:translateY(-3px); box-shadow:0 16px 32px -12px rgba(0,0,0,.55); }
+.btn-projects-more:active{ transform:translateY(-1px) scale(.98); }
+.btn-projects-more svg{ width:15px; height:15px; flex-shrink:0; }
+
+/* ---- Gallery track: overlapping, clickable thumbnails ---- */
+.gallery-wrapper{ position:relative; }
+.gallery-track{
+  position:relative;
+  height:calc(clamp(220px, 62vw, 460px) / 1.6 + 56px);
+  margin:0 auto 8px;
+}
+
+.gallery-slide{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:clamp(220px, 62vw, 460px);
+  aspect-ratio:16/10;
+  padding:0;
+  margin:0;
+  border:none;
+  background:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .6s var(--ease), opacity .5s var(--ease), filter .5s var(--ease);
+  will-change:transform, opacity, filter;
+}
+.gallery-slide.is-active{ cursor:default; }
+.gallery-slide:focus-visible{ outline:none; }
+.gallery-slide:focus-visible .gallery-thumb{ outline:2px solid var(--accent-400); outline-offset:4px; }
+
+.gallery-thumb{
+  position:absolute;
+  inset:0;
+  border-radius:18px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 30px 60px -25px rgba(0,0,0,.5);
+  transition:box-shadow .5s var(--ease);
+}
+.gallery-slide.is-active .gallery-thumb{
+  box-shadow:0 35px 70px -20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.07) inset;
+}
+
+/* Placeholder-friendly tone palette — swap for a real <img> per slide once
+   screenshots exist; everything else (sizing, motion, info panel) still works. */
+.gallery-thumb[data-tone="a"]{ background:linear-gradient(135deg, #3572e8 0%, #12213f 100%); }
+.gallery-thumb[data-tone="b"]{ background:linear-gradient(135deg, #22ab73 0%, #0e2c22 100%); }
+.gallery-thumb[data-tone="c"]{ background:linear-gradient(135deg, #8b5cf6 0%, #251a3d 100%); }
+.gallery-thumb[data-tone="ph"]{ background:var(--bg-elevated-2); border:1px dashed var(--surface-border); }
+
+.thumb-mark{
+  font-family:var(--font-display);
+  font-weight:800;
+  letter-spacing:.03em;
+  font-size:clamp(1.5rem, 1.2rem + 1.4vw, 2.3rem);
+  color:rgba(255,255,255,.88);
+}
+.gallery-thumb[data-tone="ph"] .thumb-mark{
+  font-family:var(--font-mono);
+  font-weight:600;
+  font-size:.85rem;
+  letter-spacing:.06em;
+  color:var(--text-faint);
+}
+
+/* ---- Shared info panel below the gallery — content swaps per active slide ---- */
+.gallery-info{
+  max-width:640px;
+  margin:0 auto;
+  text-align:center;
+  transition:opacity .22s var(--ease), transform .22s var(--ease);
+}
+.gallery-info.is-fading{ opacity:0; transform:translateY(6px); }
+.gallery-info-top{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.gallery-title{ font-size:clamp(1.25rem, 1.05rem + 1vw, 1.6rem); line-height:1.25; }
+.gallery-year{
   font-family:var(--font-mono);
   color:var(--text-faint);
-  font-size:.76rem;
-  white-space:nowrap;
-  padding-top:4px;
-  flex-shrink:0;
+  font-size:.78rem;
 }
-.project-role{
+.gallery-role{
+  display:block;
+  margin-top:8px;
   font-size:.78rem;
   color:var(--accent-400);
   font-weight:700;
   text-transform:uppercase;
   letter-spacing:.04em;
 }
-.project-desc{ color:var(--text-muted); font-size:clamp(.86rem, .82rem + .15vw, .94rem); line-height:1.55; }
-.project-stack{
+.gallery-desc{
+  margin-top:14px;
+  color:var(--text-muted);
+  font-size:clamp(.88rem, .84rem + .2vw, .98rem);
+  line-height:1.6;
+}
+.gallery-stack{
+  margin-top:16px;
   display:flex;
   flex-wrap:wrap;
-  gap:7px;
-  margin-top:4px;
+  justify-content:center;
+  gap:8px;
 }
 
-@media (max-width:820px){
-  .projects-grid{ grid-template-columns:1fr; gap:20px; }
+.gallery-view-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:22px;
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:.92rem;
+  color:var(--text);
+  text-decoration:underline;
+  text-underline-offset:4px;
+  text-decoration-color:var(--surface-border);
+  transition:color .25s var(--ease), text-decoration-color .25s var(--ease), transform .25s var(--ease);
 }
-@media (max-width:560px){
-  .project-body{ padding:18px 18px 20px; gap:8px; }
-  .project-top{ flex-wrap:wrap; }
-}
-@media (max-width:480px){
-  /* Horizontal-scroll carousel — same pattern used for certificates, so
-     browsing projects sideways feels consistent with the rest of the site. */
-  .projects-grid{
-    display:flex;
-    grid-template-columns:none;
-    overflow-x:auto;
-    scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-    gap:14px;
-    margin:0 -4px;
-    padding:2px 4px 6px;
-  }
-  .projects-grid::-webkit-scrollbar{ display:none; }
-  .project-card{ flex:0 0 85%; scroll-snap-align:start; }
-}
-@media (max-width:380px){
-  .project-card{ flex-basis:90%; }
+.gallery-view-link span{ transition:transform .25s var(--ease); display:inline-block; }
+.gallery-view-link:hover{ color:var(--accent-400); text-decoration-color:var(--accent-400); }
+.gallery-view-link:hover span{ transform:translateX(3px); }
+
+/* Responsive */
+@media (max-width:640px){
+  .projects-header{ flex-direction:column; gap:12px; }
+  .btn-projects-more{ align-self:flex-start; }
+  .gallery-track{ margin-bottom:4px; }
 }
 
 /* ==========================================================================

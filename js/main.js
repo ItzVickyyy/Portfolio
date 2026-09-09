@@ -33,6 +33,83 @@
   });
 
   /* ---------------------------------------------------------
+     Tool Belt marquee — infinite, gap-free scroller
+     The track's true "unit" is just the hand-authored tiles
+     (the ones without aria-hidden). On wide screens two copies
+     of that unit can be narrower than the panel, which leaves a
+     blank gap once the strip scrolls past itself. To avoid that
+     at any viewport width, we rebuild the track at runtime:
+     clone the unit until one half is at least as wide as the
+     panel, then clone that whole half once more so the CSS loop
+     (translate by exactly half the track's width) is seamless.
+     Speed is held constant in px/second so the pace doesn't
+     change as tiles are added.
+  --------------------------------------------------------- */
+  (function () {
+    var marquee = document.querySelector('.toolbelt-marquee');
+    var track = marquee && marquee.querySelector('.toolbelt-track');
+    if (!marquee || !track) return;
+
+    var unitTiles = Array.prototype.slice.call(track.children).filter(function (el) {
+      return el.getAttribute('aria-hidden') !== 'true';
+    });
+    if (!unitTiles.length) return;
+
+    var PX_PER_SECOND = 45;
+
+    function cloneUnit(hidden) {
+      unitTiles.forEach(function (tile) {
+        var clone = tile.cloneNode(true);
+        if (hidden) {
+          clone.setAttribute('aria-hidden', 'true');
+          clone.removeAttribute('title');
+        }
+        track.appendChild(clone);
+      });
+    }
+
+    function build() {
+      track.style.animation = 'none';
+      track.innerHTML = '';
+      cloneUnit(false);
+
+      var panelWidth = marquee.clientWidth;
+      var guard = 0;
+      // Keep adding copies of the unit until one "half" of the track
+      // is at least as wide as the visible panel.
+      while (track.scrollWidth < panelWidth && guard < 40) {
+        cloneUnit(true);
+        guard++;
+      }
+
+      // Duplicate the whole half so the loop point lines up exactly.
+      var half = Array.prototype.slice.call(track.children);
+      half.forEach(function (tile) {
+        var clone = tile.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        clone.removeAttribute('title');
+        track.appendChild(clone);
+      });
+
+      var distance = track.scrollWidth / 2;
+      var duration = Math.max(distance / PX_PER_SECOND, 8);
+      track.style.setProperty('--toolbelt-distance', '-' + distance + 'px');
+      track.style.setProperty('--toolbelt-duration', duration + 's');
+      // Force reflow so the animation restarts cleanly from frame 0.
+      void track.offsetWidth;
+      track.style.animation = '';
+    }
+
+    build();
+
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(build, 200);
+    });
+  })();
+
+  /* ---------------------------------------------------------
      Footer year
   --------------------------------------------------------- */
   var yearEl = document.getElementById('year');
@@ -53,9 +130,75 @@
   }
 
   if (themeToggle) {
-    themeToggle.addEventListener('click', function () {
-      var current = root.getAttribute('data-theme');
-      applyTheme(current === 'dark' ? 'light' : 'dark');
+    var themeSwitching = false;
+
+    themeToggle.addEventListener('click', function (e) {
+      if (themeSwitching) return;
+
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Click point drives the reveal's origin. Keyboard activation (Enter/
+      // Space) fires a click with clientX/clientY at 0, so fall back to the
+      // button's own center in that case.
+      var x = e.clientX, y = e.clientY;
+      if (!x && !y) {
+        var r = themeToggle.getBoundingClientRect();
+        x = r.left + r.width / 2;
+        y = r.top + r.height / 2;
+      }
+
+      if (reduceMotion) {
+        applyTheme(next);
+        return;
+      }
+
+      // Preferred path: native View Transitions. The browser snapshots the
+      // old and new page states itself, so the reveal stays pixel-accurate
+      // no matter how many elements changed color — no manual DOM cloning.
+      if (document.startViewTransition) {
+        themeSwitching = true;
+        root.classList.add('theme-switching');
+        var endRadius = Math.hypot(
+          Math.max(x, window.innerWidth - x),
+          Math.max(y, window.innerHeight - y)
+        );
+
+        var vt = document.startViewTransition(function () { applyTheme(next); });
+
+        vt.ready.then(function () {
+          document.documentElement.animate(
+            {
+              clipPath: [
+                'circle(0px at ' + x + 'px ' + y + 'px)',
+                'circle(' + endRadius + 'px at ' + x + 'px ' + y + 'px)'
+              ]
+            },
+            {
+              duration: 550,
+              easing: 'cubic-bezier(.22,1,.36,1)',
+              pseudoElement: '::view-transition-new(root)'
+            }
+          );
+        });
+
+        vt.finished.finally(function () {
+          themeSwitching = false;
+          root.classList.remove('theme-switching');
+        });
+        return;
+      }
+
+      // Fallback (browsers without View Transitions support): a uniform
+      // crossfade — every element's color/background eases together
+      // instead of snapping, for the duration of the switch.
+      themeSwitching = true;
+      root.classList.add('theme-crossfade');
+      applyTheme(next);
+      window.setTimeout(function () {
+        root.classList.remove('theme-crossfade');
+        themeSwitching = false;
+      }, 420);
     });
   }
 
@@ -133,6 +276,27 @@
   setActiveNav();
 
   /* ---------------------------------------------------------
+     About bento — capabilities icon-tab switcher
+  --------------------------------------------------------- */
+  var capTabs = Array.prototype.slice.call(document.querySelectorAll('.cap-tab'));
+  var capTitle = document.getElementById('capPanelTitle');
+  var capDesc = document.getElementById('capPanelDesc');
+  if (capTabs.length && capTitle && capDesc) {
+    capTabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        capTabs.forEach(function (t) {
+          t.classList.remove('is-active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('is-active');
+        tab.setAttribute('aria-selected', 'true');
+        capTitle.textContent = tab.dataset.title;
+        capDesc.textContent = tab.dataset.desc;
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------
      Scroll reveal via IntersectionObserver
   --------------------------------------------------------- */
   var revealEls = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
@@ -153,27 +317,126 @@
   }
 
   /* ---------------------------------------------------------
-     Project filter
+     Project gallery — overlapping thumbnails, click a side
+     thumbnail to bring it to the center; info panel below
+     fades between each project's details.
   --------------------------------------------------------- */
-  var filterButtons = Array.prototype.slice.call(document.querySelectorAll('.filter-btn'));
-  var projectCards = Array.prototype.slice.call(document.querySelectorAll('.project-card'));
+  var gallery = document.getElementById('projectGallery');
+  if (gallery) {
+    var gSlides = Array.prototype.slice.call(gallery.querySelectorAll('.gallery-slide'));
+    var gInfo = document.getElementById('galleryInfo');
+    var gTitle = gInfo.querySelector('.gallery-title');
+    var gYear = gInfo.querySelector('.gallery-year');
+    var gRole = gInfo.querySelector('.gallery-role');
+    var gDesc = gInfo.querySelector('.gallery-desc');
+    var gStack = gInfo.querySelector('.gallery-stack');
+    var gViewLink = document.getElementById('galleryViewLink');
+    var gActiveIndex = 0;
+    var gCount = gSlides.length;
+    var infoFadeTimer = null;
 
-  filterButtons.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var filter = btn.getAttribute('data-filter');
+    function gSpacing() {
+      // Measure the actual rendered slide so spacing always matches the
+      // current responsive width instead of a hardcoded breakpoint table.
+      var w = gSlides[0].getBoundingClientRect().width;
+      return w * 0.6;
+    }
 
-      filterButtons.forEach(function (b) {
-        b.classList.toggle('active', b === btn);
-        b.setAttribute('aria-selected', String(b === btn));
+    function updateInfo(index) {
+      var slide = gSlides[index];
+      var tags = (slide.dataset.tags || '').split(',').map(function (t) { return t.trim(); }).filter(Boolean);
+
+      gTitle.textContent = slide.dataset.title || '';
+      gYear.textContent = slide.dataset.year || '';
+      gRole.textContent = slide.dataset.role || '';
+      gDesc.textContent = slide.dataset.desc || '';
+      gStack.innerHTML = '';
+      tags.forEach(function (tag) {
+        var span = document.createElement('span');
+        span.className = 'tag';
+        span.textContent = tag;
+        gStack.appendChild(span);
       });
 
-      projectCards.forEach(function (card) {
-        var cats = (card.getAttribute('data-category') || '').split(' ');
-        var show = filter === 'all' || cats.indexOf(filter) !== -1;
-        card.style.display = show ? '' : 'none';
+      if (gViewLink) {
+        var link = slide.dataset.link;
+        if (link) {
+          gViewLink.href = link;
+          gViewLink.hidden = false;
+        } else {
+          // Placeholder slots ("Project 4–10, TBA") have nowhere real to
+          // send someone yet — hide the link rather than point it at "#".
+          gViewLink.hidden = true;
+        }
+      }
+    }
+
+    function gGoTo(index) {
+      var next = ((index % gCount) + gCount) % gCount;
+      if (next === gActiveIndex) return;
+      gActiveIndex = next;
+      gRender();
+
+      // Cross-fade the info panel instead of snapping to new text.
+      gInfo.classList.add('is-fading');
+      clearTimeout(infoFadeTimer);
+      infoFadeTimer = setTimeout(function () {
+        updateInfo(gActiveIndex);
+        gInfo.classList.remove('is-fading');
+      }, 180);
+    }
+
+    function gRender() {
+      var space = gSpacing();
+      gSlides.forEach(function (slide, i) {
+        // Shortest circular distance so the fan wraps both directions
+        // (e.g. slides 7,8,9,10 sit to the left of slide 1).
+        var offset = i - gActiveIndex;
+        if (offset > gCount / 2) offset -= gCount;
+        if (offset < -gCount / 2) offset += gCount;
+
+        var abs = Math.abs(offset);
+        var translateX = offset * space;
+        var scale = abs >= 2 ? 0.66 : abs === 1 ? 0.82 : 1;
+        var opacity = abs <= 2 ? 1 - abs * 0.22 : 0;
+        var brightness = abs === 0 ? 1 : abs === 1 ? 0.55 : 0.35;
+        var zIndex = 20 - abs;
+
+        slide.style.transform = 'translate(-50%, -50%) translateX(' + translateX + 'px) scale(' + scale + ')';
+        slide.style.opacity = opacity;
+        slide.style.zIndex = zIndex;
+        slide.style.filter = 'brightness(' + brightness + ')';
+        slide.style.pointerEvents = abs <= 2 ? 'auto' : 'none';
+        slide.classList.toggle('is-active', i === gActiveIndex);
+        slide.setAttribute('aria-current', String(i === gActiveIndex));
       });
+    }
+
+    gSlides.forEach(function (slide, i) {
+      slide.addEventListener('click', function () { gGoTo(i); });
     });
-  });
+
+    gallery.setAttribute('tabindex', '0');
+    gallery.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { gGoTo(gActiveIndex - 1); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { gGoTo(gActiveIndex + 1); e.preventDefault(); }
+    });
+
+    var gTouchX = null;
+    gallery.addEventListener('touchstart', function (e) {
+      gTouchX = e.touches[0].clientX;
+    }, { passive: true });
+    gallery.addEventListener('touchend', function (e) {
+      if (gTouchX === null) return;
+      var dx = e.changedTouches[0].clientX - gTouchX;
+      if (Math.abs(dx) > 45) gGoTo(gActiveIndex + (dx < 0 ? 1 : -1));
+      gTouchX = null;
+    }, { passive: true });
+
+    window.addEventListener('resize', function () { gRender(); });
+    updateInfo(gActiveIndex);
+    gRender();
+  }
 
   /* ---------------------------------------------------------
      Certificate tabs (Excellence & Awards / Completions /
@@ -309,7 +572,7 @@
      Contact modal
   --------------------------------------------------------- */
   var contactModal = document.getElementById('contactModal');
-  var contactOpeners = ['heroContactBtn', 'connectContactBtn', 'servicesContactBtn', 'footerContactBtn', 'footerContactBtn2']
+  var contactOpeners = ['navContactBtn', 'heroContactBtn', 'aboutContactBtn', 'connectContactBtn', 'servicesContactBtn', 'footerContactBtn', 'footerContactBtn2']
     .map(function (id) { return document.getElementById(id); })
     .filter(Boolean);
 

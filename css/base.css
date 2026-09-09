@@ -5,10 +5,10 @@
 
 :root{
   /* ---- Brand accent (from the source Figma designs) ---- */
-  --accent-500:#fd6f00;
-  --accent-600:#e46400;
-  --accent-400:#fd853a;
-  --accent-300:#feb273;
+  --accent-500:#e2231a;
+  --accent-600:#b8180f;
+  --accent-400:#f0453b;
+  --accent-300:#f6928b;
   --accent-gradient: linear-gradient(100deg, var(--accent-500) 4%, var(--accent-600) 95%);
 
   /* ---- Dark theme (default) ---- */
@@ -27,14 +27,24 @@
   --radius-lg:26px;
   --radius-pill:100px;
   --shadow-soft: 0 20px 50px -20px rgba(0,0,0,.5);
-  --shadow-pop: 0 10px 30px -8px rgba(253,111,0,.35);
+  --shadow-pop: 0 10px 30px -8px rgba(226,35,26,.35);
 
   --font-display:'Urbanist', sans-serif;
   --font-body:'Manrope', sans-serif;
   --font-mono:'JetBrains Mono', monospace;
 
   --container: 1400px;
+  --container-padding: 20px;
   --nav-h: 84px;
+
+  /* ---- Spacing scale (used for consistent, non-fluid gaps/padding) ---- */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1.25rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4.5rem;
 
   --ease: cubic-bezier(.19,1,.22,1);
   color-scheme: dark;
@@ -113,10 +123,26 @@ p{ margin:0; }
   width:100%;
   max-width:var(--container);
   margin:0 auto;
-  padding:0 clamp(16px, 4vw + 4px, 40px);
+  padding:0 var(--container-padding);
+}
+
+/* Container gutter widens in discrete steps as viewport grows, instead of
+   scaling continuously — matches the LSPU landing page's approach so the
+   gutter feels stable at each device tier rather than constantly shifting.
+   Values are tuned to land close to the original fluid curve's own range
+   (which topped out at 40px), so the layout doesn't shift on large screens. */
+@media (min-width:768px){
+  :root{ --container-padding: 32px; }
+}
+@media (min-width:1024px){
+  :root{ --container-padding: 40px; }
 }
 
 .section{
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  align-items:center;
   padding:clamp(40px, 9vw, 90px) 0;
   position:relative;
 }
@@ -128,6 +154,14 @@ p{ margin:0; }
 }
 @media (max-width:360px){
   .section{ padding:36px 0; }
+}
+
+/* Escape hatch for compact strip sections (a closing CTA, etc.) that
+   shouldn't be stretched to fill a full screen just because they're
+   wrapped in .section — content-driven height, back to normal flow. */
+.section-auto{
+  min-height:0;
+  display:block;
 }
 
 .section-head{
@@ -197,7 +231,7 @@ p{ margin:0; }
   color:#fff;
   box-shadow:var(--shadow-pop);
 }
-.btn-primary:hover{ transform:translateY(-3px); box-shadow:0 16px 34px -10px rgba(253,111,0,.5); }
+.btn-primary:hover{ transform:translateY(-3px); box-shadow:0 16px 34px -10px rgba(226,35,26,.5); }
 
 .btn-ghost{
   background:transparent;
