@@ -868,19 +868,33 @@
 
         <h3 class="cert-tier-label">Recent achievement</h3>
         <div class="achievement-feature-card reveal">
-          <div class="achievement-feature-media achievement-feature-media-empty" aria-hidden="true">
-            <span>Recent achievement image coming soon</span>
-          </div>
+          <button type="button" class="achievement-feature-media"
+            data-cert-img="assets/images/certificates/National-Certificate-II.webp"
+            data-cert-title="National Certificate II — Computer Systems Servicing"
+            data-cert-desc="Issued by TESDA (Technical Education and Skills Development Authority) on September 12, 2026, valid until September 11, 2031. Training at LFS Training and Assessment Center Inc., July 2026.">
+            <img src="assets/images/certificates/thumbs/National-Certificate-II-feature.webp"
+              alt="National Certificate II in Computer Systems Servicing from TESDA" loading="lazy" width="960"
+              height="660">
+            <span class="achievement-feature-media-hint">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 17 17 7M7 7h10v10" />
+              </svg>
+              View certificate
+            </span>
+          </button>
           <div class="achievement-feature-copy">
             <span class="eyebrow">Recent achievement</span>
-            <h2 class="section-title">Lorem Ipsum Achievement Title</h2>
+            <h2 class="section-title">National Certificate II — Computer Systems Servicing</h2>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua, placeholder copy for the next recent achievement to be added here.
+              I finished my CSS NC II training at LFS Training and Assessment Center Inc. in July 2026 and passed the
+              TESDA competency assessment. The certificate was issued on September 12, 2026. It covers installing and
+              configuring computer systems, setting up computer networks and servers, and maintaining and repairing
+              computer systems.
             </p>
             <div class="achievement-feature-tags">
-              <span class="tag">Placeholder tag</span>
-              <span class="tag">Placeholder tag</span>
+              <span class="tag">TESDA</span>
+              <span class="tag">Computer Systems Servicing</span>
+              <span class="tag">2026</span>
             </div>
           </div>
         </div>
@@ -892,8 +906,11 @@
             id="certTab-completions" aria-controls="certPanel-completions">Completions</button>
           <button type="button" class="cert-tab-btn" data-cert-tab="participation" role="tab" aria-selected="false"
             id="certTab-participation" aria-controls="certPanel-participation">Participation</button>
+          <!-- "In progress" tab hidden for now (nothing in progress). To bring it back, uncomment this button
+               and the #certPanel-progress panel further below.
           <button type="button" class="cert-tab-btn" data-cert-tab="progress" role="tab" aria-selected="false"
             id="certTab-progress" aria-controls="certPanel-progress">In progress</button>
+          -->
         </div>
 
         <div class="cert-tab-panels">
@@ -1024,6 +1041,25 @@
               <div class="cert-carousel-viewport" tabindex="0" role="group"
                 aria-label="Completion certificates, scroll or use arrow keys to browse" data-track-viewport>
                 <div class="cert-carousel-track" data-track>
+
+                  <div class="cert-carousel-slide">
+                    <button class="cert-card"
+                      data-cert-img="assets/images/certificates/National-Certificate-II.webp"
+                      data-cert-title="National Certificate II — Computer Systems Servicing"
+                      data-cert-desc="Issued by TESDA on September 12, 2026, valid until September 11, 2031. Training at LFS Training and Assessment Center Inc., July 2026.">
+                      <div class="cert-thumb skeleton-img-wrap"><img
+                          src="assets/images/certificates/thumbs/National-Certificate-II.webp" alt="" loading="lazy"
+                          width="480" height="330"></div>
+                      <div class="cert-info">
+                        <h3>National Certificate II — Computer Systems Servicing</h3>
+                        <p>TESDA · Issued September 2026</p>
+                        <span class="cert-view">View certificate <svg viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                          </svg></span>
+                      </div>
+                    </button>
+                  </div>
 
                   <div class="cert-carousel-slide">
                     <button class="cert-card"
@@ -1242,6 +1278,7 @@
             </div>
           </div>
 
+          <!-- "In progress" panel hidden for now. Uncomment together with its tab button above.
           <div class="cert-tab-panel" id="certPanel-progress" role="tabpanel" aria-labelledby="certTab-progress" hidden>
             <h3 class="cert-tier-label">In progress</h3>
             <div class="cert-grid">
@@ -1250,12 +1287,13 @@
                   <div class="cert-thumb-empty">Certificate pending issuance</div>
                 </div>
                 <div class="cert-info">
-                  <h3>NC II — Computer Systems Servicing</h3>
-                  <p>LFS Training and Assessment Center Inc. · Awaiting official issuance</p>
+                  <h3>Certificate title</h3>
+                  <p>Issuer · Status</p>
                 </div>
               </div>
             </div>
           </div>
+          -->
         </div>
       </div>
     </section>
