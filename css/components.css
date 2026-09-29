@@ -566,6 +566,16 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   grid-auto-rows:min-content;
   gap:20px;
 }
+/* Every direct bento cell gets min-width:0. Grid items default to
+   min-width:auto (their content's max-content size), which is normally
+   harmless — but .toolbelt-track is deliberately width:max-content for
+   its infinite-scroll animation, and that intrinsic width was winning
+   the grid's auto track-sizing once the layout collapses to a single
+   column below 900px, stretching every card (not just the Tool Belt)
+   out past the viewport. min-width:0 lets each cell shrink to the
+   track's actual size instead and leaves the marquee's own
+   overflow:hidden to do the clipping, as intended. */
+.about-bento > *{ min-width:0; }
 
 .about-bento-picture{
   grid-column:1;
@@ -780,6 +790,53 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   transition:border-color .3s var(--ease), transform .3s var(--ease);
 }
 .toolbelt-tile:hover{ border-color:var(--accent-400); transform:translateY(-3px); }
+.toolbelt-tile:focus-visible{
+  outline:none;
+  border-color:var(--accent-400);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--accent-400) 35%, transparent);
+}
+
+/* Keyboard focus should pause the marquee exactly like :hover already
+   does — otherwise a tile a keyboard user has tabbed to keeps sliding
+   out from under them. */
+.toolbelt-marquee:focus-within .toolbelt-track{ animation-play-state:paused; }
+
+/* ---- Custom tool-belt tooltip ----
+   Tile names used to sit in the native title="" attribute, which is slow
+   to appear, can't be styled, and — since every tile lives inside the
+   marquee's clipped, horizontally-masked viewport — a same-element CSS
+   tooltip would get cut off before it could show. Instead a single
+   shared tooltip bubble is appended to <body> (js/main.js) and
+   positioned with getBoundingClientRect() on hover/focus, so it always
+   renders above everything, on both mouse and keyboard. */
+.toolbelt-tooltip{
+  position:fixed;
+  left:0; top:0;
+  transform:translate(-50%, calc(-100% - 10px));
+  padding:6px 10px;
+  border-radius:var(--radius-sm);
+  background:rgba(18,17,16,.92);
+  color:#fff;
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  white-space:nowrap;
+  pointer-events:none;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .15s var(--ease), visibility .15s;
+  z-index:80;
+}
+.toolbelt-tooltip::after{
+  content:"";
+  position:absolute;
+  left:50%; top:100%;
+  transform:translateX(-50%);
+  border:5px solid transparent;
+  border-top-color:rgba(18,17,16,.92);
+}
+.toolbelt-tooltip.is-visible{ opacity:1; visibility:visible; }
 .toolbelt-icon{
   display:flex;
   align-items:center;
@@ -1835,6 +1892,60 @@ button.cert-view{
 .cert-modal-img.is-zoom-animated{ transition:transform .2s var(--ease); }
 .cert-modal.is-loading .cert-modal-img{ visibility:hidden; }
 .cert-modal.is-error .cert-modal-img{ display:none; }
+
+/* ---- Certificate prev/next navigation ----
+   Browses between the certificates in whichever carousel the viewer
+   opened this one from, without closing and reopening the modal. Only
+   shown when that group actually has more than one certificate. */
+.cert-nav-btn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:3;
+  width:38px; height:38px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(18,17,16,.72);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  color:#fff;
+  transition:background .2s var(--ease), opacity .2s var(--ease), transform .2s var(--ease);
+}
+.cert-nav-btn svg{ width:18px; height:18px; }
+.cert-nav-btn:hover{ background:rgba(255,255,255,.16); }
+.cert-nav-prev{ left:14px; }
+.cert-nav-next{ right:14px; }
+.cert-nav-btn.is-hidden{ display:none; }
+/* Only offer prev/next once a certificate has actually finished loading
+   (matches the zoom controls' own reveal condition). */
+.cert-modal.is-loading .cert-nav-btn,
+.cert-modal.is-error .cert-nav-btn{ opacity:0; visibility:hidden; pointer-events:none; }
+.cert-nav-counter{
+  position:absolute;
+  left:14px; top:14px;
+  z-index:3;
+  padding:5px 10px;
+  border-radius:var(--radius-pill);
+  background:rgba(18,17,16,.72);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.14);
+  color:#fff;
+  font-family:var(--font-mono);
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.02em;
+}
+.cert-nav-counter.is-hidden{ display:none; }
+.cert-modal.is-loading .cert-nav-counter,
+.cert-modal.is-error .cert-nav-counter{ opacity:0; visibility:hidden; }
+@media (max-width:480px){
+  .cert-nav-btn{ width:34px; height:34px; }
+  .cert-nav-prev{ left:10px; }
+  .cert-nav-next{ right:10px; }
+  .cert-nav-counter{ left:10px; top:10px; font-size:.68rem; padding:4px 9px; }
+}
 
 /* ---- Certificate zoom controls ---- */
 .cert-zoom-controls{
