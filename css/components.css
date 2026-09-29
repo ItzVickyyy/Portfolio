@@ -218,8 +218,8 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
    ========================================================================== */
 .bottom-nav{ display:none; }
 
-@media (max-width:480px){
-  /* On phone, the hamburger button and its popup dropdown are replaced
+@media (max-width:1024px){
+  /* On phone AND tablet (<=1024px), the hamburger button and its popup dropdown are replaced
      entirely by the fixed bottom bar below — hide both regardless of
      .is-open state. */
   .nav-toggle{ display:none !important; }
@@ -271,6 +271,20 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
     color:var(--accent-400);
     background:none;
   }
+}
+/* Tablet: same bar as phone, just a touch roomier — larger icons/labels,
+   and the links stay grouped in a centred strip instead of stretching
+   edge-to-edge across a 800–1000px wide bar. */
+@media (min-width:481px) and (max-width:1024px){
+  body{ padding-bottom:calc(76px + env(safe-area-inset-bottom, 0px)); }
+  .bottom-nav{
+    justify-content:center;
+    gap:clamp(4px, 1.5vw, 16px);
+    padding:8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+  .bottom-nav-link{ flex:0 1 112px; padding:8px 4px; }
+  .bottom-nav-link svg{ width:22px; height:22px; }
+  .bottom-nav-link span{ font-size:.72rem; }
 }
 @media (max-width:360px){
   .bottom-nav-link span{ font-size:.58rem; }
@@ -886,31 +900,35 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 .toolbelt-icon svg{ width:100%; height:100%; display:block; }
 .toolbelt-tile:hover .toolbelt-icon{ color:var(--accent-400); }
 
-@media (max-width:900px){
-  .about-bento{ grid-template-columns:1fr; }
-  .about-bento-picture{ grid-column:1; grid-row:auto; max-width:360px; margin:0 auto; }
-  .about-bento-picture .about-photo{ aspect-ratio:4/5; height:auto; }
-  .about-card-header{ flex-direction:column; align-items:flex-start; gap:4px; }
-  .about-tagline{ text-align:left; }
-  .about-bento-text{ grid-column:1; grid-row:auto; }
-  .about-bento-capabilities{ grid-column:1; grid-row:auto; }
-  .about-bento-contact{ grid-column:1; grid-row:auto; }
+@media (max-width:1024px){
+  /* Phone-style About on tablet too: one centred column, the full portrait
+     card is replaced by a compact avatar beside the name (see
+     .about-mini-avatar), header stays a single row. */
+  .about-bento{ grid-template-columns:1fr; gap:14px; max-width:720px; margin-inline:auto; }
+  .about-bento-picture{ display:none; }
+  .about-card-header{ flex-direction:row; align-items:center; justify-content:flex-start; gap:14px; flex-wrap:nowrap; }
+  .about-mini-avatar{ display:block; }
+  .about-tagline{ text-align:left; white-space:normal; }
+  .about-bento-text,
+  .about-bento-capabilities,
+  .about-bento-contact,
   .about-bento-toolbelt{ grid-column:1; grid-row:auto; }
+  .about-bento-text{ padding-bottom:38px; }
+  .about-dock-btn{ padding:7px 11px; font-size:.7rem; }
+}
+@media (min-width:481px) and (max-width:1024px){
+  /* Tablet only: a 2x2 grid of 9:5 tiles would be huge at this width, so
+     lay the four contact links out in one row. */
+  .about-contact-grid{ grid-template-columns:repeat(4, 1fr); }
+  .about-contact-link{ aspect-ratio:3 / 2; }
 }
 @media (max-width:480px){
-  .about-bento{ gap:14px; }
-  /* Phone view: the full-width portrait card is replaced by a small
-     avatar sitting next to the name (see .about-mini-avatar), matching
-     the compact single-card header used at this size. */
-  .about-bento-picture{ display:none; }
-  .about-card-header{ flex-direction:row; align-items:center; gap:14px; flex-wrap:nowrap; }
-  .about-mini-avatar{ display:block; }
+  /* Phone: tighter padding and type on top of the shared layout above. */
   .about-bento-text{ padding:20px; padding-bottom:38px; }
   .about-bento-capabilities{ padding:20px; }
   .about-bento-contact{ padding:20px; }
   .about-bento-text p{ margin-bottom:10px; font-size:.86rem; }
   .about-bento-text p:last-of-type{ margin-bottom:8px; }
-  .about-dock-btn{ padding:7px 11px; font-size:.7rem; }
   .about-contact-grid{ gap:8px; }
   .about-contact-link{ aspect-ratio:9 / 5; }
   .about-contact-link svg{ width:24px; height:24px; }
@@ -1144,17 +1162,14 @@ button.service-pillar-head{
   max-width:520px;
 }
 
-@media (max-width:900px){
-  .services-grid{ grid-template-columns:1fr; }
-}
 @media (max-width:560px){
   .service-pillar-head{ gap:12px; }
   .service-pillar-icon{ width:44px; height:44px; }
   .service-pillar-icon svg{ width:20px; height:20px; }
   .service-note{ padding:18px 20px; flex-direction:column; align-items:flex-start; }
 }
-@media (max-width:480px){
-  /* Phone view: each service becomes a collapsible accordion row instead
+@media (max-width:1024px){
+  /* Phone AND tablet view: each service becomes a collapsible accordion row instead
      of a horizontally-scrolling full card — same content, just tucked
      away until tapped open. The two grids (pillar + compact) are styled
      identically here so they read as one continuous list. */
@@ -1186,6 +1201,13 @@ button.service-pillar-head{
   .service-accordion-item.is-open > .service-body{ display:block; }
   .service-accordion-chevron{ display:flex; }
   .service-accordion-item.is-open .service-accordion-chevron{ transform:rotate(180deg); }
+  /* Keep the accordion list a phone-like column instead of stretching it
+     across a wide tablet viewport. */
+  .services-grid,
+  .services-grid-compact{ max-width:720px; margin-inline:auto; }
+  .service-note{ max-width:720px; margin-inline:auto; }
+}
+@media (max-width:480px){
   .service-note{ padding:18px 16px; }
 }
 @media (max-width:380px){
@@ -1221,7 +1243,14 @@ button.service-pillar-head{
 @media (max-width:560px){
   .service-compact{ padding:20px 18px; }
 }
-@media (max-width:480px){
+@media (min-width:481px) and (max-width:1024px){
+  /* .services-grid-compact's base rule above (auto-fit, minmax(260px, 1fr))
+     comes later in the file than the accordion block and would split the
+     compact accordions into 2 columns at tablet widths. Keep it one column
+     so it stacks like the pillar list and like phone. */
+  .services-grid-compact{ grid-template-columns:1fr; }
+}
+@media (max-width:1024px){
   /* .service-compact and .service-compact .service-pillar-head above are
      more specific than the shared accordion rules in the 480px block
      further up, so on phone they were winning and leaving the Discord /
