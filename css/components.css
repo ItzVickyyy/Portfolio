@@ -214,6 +214,70 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 }
 
 /* ==========================================================================
+   BOTTOM NAV — phone-only replacement for the hamburger + popup menu
+   ========================================================================== */
+.bottom-nav{ display:none; }
+
+@media (max-width:480px){
+  /* On phone, the hamburger button and its popup dropdown are replaced
+     entirely by the fixed bottom bar below — hide both regardless of
+     .is-open state. */
+  .nav-toggle{ display:none !important; }
+  .nav-links{ display:none !important; }
+
+  /* Leave room at the bottom of the page so the fixed bar never covers
+     the last bit of content (footer, last section, etc). */
+  body{ padding-bottom:calc(64px + env(safe-area-inset-bottom, 0px)); }
+
+  .bottom-nav{
+    display:flex;
+    align-items:stretch;
+    justify-content:space-between;
+    position:fixed;
+    left:0; right:0; bottom:0;
+    z-index:200;
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+    background:rgba(18,17,16,.86);
+    border-top:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+  }
+  html[data-theme="light"] .bottom-nav{
+    background:rgba(255,255,255,.9);
+    border-color:rgba(20,15,5,.08);
+  }
+
+  .bottom-nav-link{
+    flex:1 1 0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    padding:6px 2px;
+    border-radius:12px;
+    color:var(--text-faint);
+    text-align:center;
+    transition:color .25s var(--ease), background .25s var(--ease);
+  }
+  .bottom-nav-link svg{ width:20px; height:20px; flex-shrink:0; }
+  .bottom-nav-link span{
+    font-size:.62rem;
+    font-weight:600;
+    line-height:1.1;
+    white-space:nowrap;
+  }
+  .bottom-nav-link.active{
+    color:var(--accent-400);
+    background:none;
+  }
+}
+@media (max-width:360px){
+  .bottom-nav-link span{ font-size:.58rem; }
+  .bottom-nav-link svg{ width:18px; height:18px; }
+}
+
+/* ==========================================================================
    SKELETON LOADING (reusable)
    Add class="skeleton-img-wrap" to any container that wraps a single <img>
    (the container needs a defined size — aspect-ratio, fixed height, etc.,
@@ -714,12 +778,18 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 
 .capabilities-tabs{
   display:flex;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   gap:8px;
   padding-bottom:16px;
   margin-bottom:16px;
   border-bottom:1px solid var(--surface-border);
+  /* Safety net: if a tab count/size combo is ever added that can't fit
+     even at the shrunk sizes below, scroll horizontally within the row
+     instead of wrapping to a second line. */
+  overflow-x:auto;
+  scrollbar-width:none;
 }
+.capabilities-tabs::-webkit-scrollbar{ display:none; }
 .cap-tab{
   width:40px; height:40px;
   border-radius:12px;
@@ -845,6 +915,14 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .about-contact-link{ aspect-ratio:9 / 5; }
   .about-contact-link svg{ width:24px; height:24px; }
   .toolbelt-tile{ width:52px; height:52px; }
+  .capabilities-tabs{ gap:6px; }
+  .cap-tab{ width:34px; height:34px; border-radius:10px; }
+  .cap-tab svg{ width:16px; height:16px; }
+}
+@media (max-width:360px){
+  .capabilities-tabs{ gap:5px; }
+  .cap-tab{ width:30px; height:30px; border-radius:9px; }
+  .cap-tab svg{ width:14px; height:14px; }
 }
 
 /* ==========================================================================
@@ -1142,6 +1220,26 @@ button.service-pillar-head{
 
 @media (max-width:560px){
   .service-compact{ padding:20px 18px; }
+}
+@media (max-width:480px){
+  /* .service-compact and .service-compact .service-pillar-head above are
+     more specific than the shared accordion rules in the 480px block
+     further up, so on phone they were winning and leaving the Discord /
+     Web & Portfolio cards bigger than the PC & Laptop / Tutor cards even
+     when collapsed. Re-apply the accordion sizing here, at equal-or-higher
+     specificity, so every accordion row — pillar or compact — matches. */
+  .service-compact.service-accordion-item{ padding:18px 18px; }
+  .service-compact.service-accordion-item > .service-pillar-head{
+    padding-bottom:0;
+    margin-bottom:0;
+  }
+  .service-compact.service-accordion-item.is-open > .service-pillar-head{
+    padding-bottom:16px;
+    margin-bottom:16px;
+  }
+}
+@media (max-width:380px){
+  .service-compact.service-accordion-item{ padding:16px 16px; }
 }
 
 /* ==========================================================================
