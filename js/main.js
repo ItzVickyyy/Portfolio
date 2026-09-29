@@ -62,15 +62,7 @@
         var clone = tile.cloneNode(true);
         if (hidden) {
           clone.setAttribute('aria-hidden', 'true');
-          // These decorative copies exist purely to fill out the seamless
-          // scroll loop — they must not be a second (invisible-but-live)
-          // tab stop, and must not trigger the tooltip, which is why
-          // data-tooltip/aria-label/tabindex are stripped alongside the
-          // legacy title attribute.
           clone.removeAttribute('title');
-          clone.removeAttribute('data-tooltip');
-          clone.removeAttribute('aria-label');
-          clone.removeAttribute('tabindex');
         }
         track.appendChild(clone);
       });
@@ -96,9 +88,6 @@
         var clone = tile.cloneNode(true);
         clone.setAttribute('aria-hidden', 'true');
         clone.removeAttribute('title');
-        clone.removeAttribute('data-tooltip');
-        clone.removeAttribute('aria-label');
-        clone.removeAttribute('tabindex');
         track.appendChild(clone);
       });
 
@@ -119,6 +108,25 @@
       resizeTimer = setTimeout(build, 200);
     });
   })();
+
+  /* ---------------------------------------------------------
+     Services accordion (phone view)
+
+     The header button and body are always in the DOM; whether they
+     actually behave like a collapsible accordion is decided purely by
+     CSS (see the 480px breakpoint in components.css) — above that width
+     .service-body is plain, always-visible block content and this class
+     toggle has no visual effect. Attaching the listener unconditionally
+     is simplest and harmless either way.
+  --------------------------------------------------------- */
+  document.querySelectorAll('.service-accordion-item').forEach(function (item) {
+    var trigger = item.querySelector('.service-pillar-head');
+    if (!trigger) return;
+    trigger.addEventListener('click', function () {
+      var isOpen = item.classList.toggle('is-open');
+      trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  });
 
   /* ---------------------------------------------------------
      Footer year
@@ -424,19 +432,7 @@
     }
 
     gSlides.forEach(function (slide, i) {
-      slide.addEventListener('click', function () {
-        // The centered/active thumbnail is already what "View Project"
-        // below is describing — clicking it again should act like that
-        // link (open the project, in a new tab) instead of doing
-        // nothing, which is what a no-op re-click used to do. Side
-        // thumbnails still just bring themselves to the center first.
-        if (i === gActiveIndex) {
-          var link = slide.dataset.link;
-          if (link) window.open(link, '_blank', 'noopener,noreferrer');
-          return;
-        }
-        gGoTo(i);
-      });
+      slide.addEventListener('click', function () { gGoTo(i); });
     });
 
     gallery.setAttribute('tabindex', '0');
@@ -675,94 +671,35 @@
     loader.src = src;
   }
 
-  var certTriggers = Array.prototype.slice.call(document.querySelectorAll('[data-cert-img]'));
-
-  // Certificates are shown grouped into carousels (Excellence, Completions,
-  // Participation) plus a couple of standalone spots (Recent achievement,
-  // the two diplomas in Education). Prev/Next browses within whichever of
-  // those groups the person opened a certificate from — a diploma opened
-  // on its own doesn't suddenly start cycling through unrelated award
-  // certificates. Falls back to a group of one (arrows hidden) for any
-  // trigger that isn't inside a carousel track.
-  function certGroupFor(card) {
-    var track = card.closest('[data-track]');
-    if (!track) return [card];
-    return Array.prototype.slice.call(track.querySelectorAll('[data-cert-img]'));
-  }
-
-  var certCurrentGroup = [];
-  var certCurrentIndex = 0;
-
-  function openCertificate(card) {
-    var src = card.getAttribute('data-cert-img');
-    var title = card.getAttribute('data-cert-title') || '';
-    var desc = card.getAttribute('data-cert-desc') || '';
-
-    certRequestId += 1;
-    var thisRequestId = certRequestId;
-
-    // Reset immediately — the previous certificate must never linger.
-    resetCertZoom();
-    certModalImg.removeAttribute('src');
-    certModalImg.alt = '';
-    certModalTitle.textContent = title;
-    certModalDesc.textContent = desc;
-    setCertModalState('loading');
-
-    certCurrentGroup = certGroupFor(card);
-    certCurrentIndex = certCurrentGroup.indexOf(card);
-    updateCertNav();
-
-    loadCertImage(src, title, thisRequestId);
-  }
-
-  certTriggers.forEach(function (card) {
+  document.querySelectorAll('[data-cert-img]').forEach(function (card) {
     var src = card.getAttribute('data-cert-img');
 
     card.addEventListener('mouseenter', function () { preloadCertImage(src); });
     card.addEventListener('focus', function () { preloadCertImage(src); });
 
     card.addEventListener('click', function () {
+      var title = card.getAttribute('data-cert-title') || '';
+      var desc = card.getAttribute('data-cert-desc') || '';
+
+      certRequestId += 1;
+      var thisRequestId = certRequestId;
+
+      // Reset immediately — the previous certificate must never linger.
+      resetCertZoom();
+      certModalImg.removeAttribute('src');
+      certModalImg.alt = '';
+      certModalTitle.textContent = title;
+      certModalDesc.textContent = desc;
+      setCertModalState('loading');
+
       openModal(certModal);
-      openCertificate(card);
+      loadCertImage(src, title, thisRequestId);
     });
   });
 
   if (certModalClose) {
     certModalClose.addEventListener('click', function () { closeModal(certModal); });
   }
-
-  /* ---------------------------------------------------------
-     Certificate prev/next navigation
-  --------------------------------------------------------- */
-  var certNavPrev = document.getElementById('certNavPrev');
-  var certNavNext = document.getElementById('certNavNext');
-  var certNavCounter = document.getElementById('certNavCounter');
-
-  function updateCertNav() {
-    var multiple = certCurrentGroup.length > 1;
-    if (certNavPrev) certNavPrev.classList.toggle('is-hidden', !multiple);
-    if (certNavNext) certNavNext.classList.toggle('is-hidden', !multiple);
-    if (certNavCounter) {
-      certNavCounter.classList.toggle('is-hidden', !multiple);
-      certNavCounter.textContent = (certCurrentIndex + 1) + ' / ' + certCurrentGroup.length;
-    }
-  }
-
-  function certStep(delta) {
-    if (certCurrentGroup.length < 2) return;
-    var next = ((certCurrentIndex + delta) % certCurrentGroup.length + certCurrentGroup.length) % certCurrentGroup.length;
-    openCertificate(certCurrentGroup[next]);
-  }
-
-  if (certNavPrev) certNavPrev.addEventListener('click', function () { certStep(-1); });
-  if (certNavNext) certNavNext.addEventListener('click', function () { certStep(1); });
-
-  document.addEventListener('keydown', function (e) {
-    if (!certModal || !certModal.classList.contains('is-open')) return;
-    if (e.key === 'ArrowLeft') { certStep(-1); e.preventDefault(); }
-    if (e.key === 'ArrowRight') { certStep(1); e.preventDefault(); }
-  });
 
   /* ---------------------------------------------------------
      Certificate zoom (pan + zoom inside the existing modal)
@@ -982,63 +919,6 @@
       zoomState.ty = clamped.y;
       applyTransform(false);
     });
-  }
-
-  /* ---------------------------------------------------------
-     Tool Belt tooltip
-
-     Tiles live inside the marquee's clipped, horizontally-masked
-     viewport, so a same-element CSS tooltip would be cut off. Instead
-     a single shared bubble is appended to <body> (escapes the clip)
-     and repositioned above whichever tile is hovered/focused using
-     getBoundingClientRect(). Hovering/focusing already pauses the
-     marquee's scroll animation (see CSS), so the tile is stationary
-     by the time the tooltip appears.
-
-     Wired with event delegation on the marquee (mouseover/focusin
-     rather than per-tile mouseenter/focus) because the marquee above
-     rebuilds — and replaces — its tile nodes on every window resize;
-     listeners bound directly to individual tiles would go stale the
-     first time that happens.
-  --------------------------------------------------------- */
-  var toolbeltMarquee = document.querySelector('.toolbelt-marquee');
-  if (toolbeltMarquee) {
-    var tbTooltip = document.createElement('div');
-    tbTooltip.className = 'toolbelt-tooltip';
-    tbTooltip.setAttribute('role', 'tooltip');
-    tbTooltip.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(tbTooltip);
-
-    var tbShow = function (tile) {
-      var rect = tile.getBoundingClientRect();
-      tbTooltip.textContent = tile.getAttribute('data-tooltip') || '';
-      tbTooltip.style.left = (rect.left + rect.width / 2) + 'px';
-      tbTooltip.style.top = rect.top + 'px';
-      tbTooltip.classList.add('is-visible');
-    };
-    var tbHide = function () { tbTooltip.classList.remove('is-visible'); };
-
-    toolbeltMarquee.addEventListener('mouseover', function (e) {
-      var tile = e.target.closest('.toolbelt-tile[data-tooltip]');
-      if (tile) tbShow(tile);
-    });
-    toolbeltMarquee.addEventListener('mouseout', function (e) {
-      var tile = e.target.closest('.toolbelt-tile[data-tooltip]');
-      var to = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest('.toolbelt-tile[data-tooltip]') : null;
-      if (tile && tile !== to) tbHide();
-    });
-    toolbeltMarquee.addEventListener('focusin', function (e) {
-      var tile = e.target.closest('.toolbelt-tile[data-tooltip]');
-      if (tile) tbShow(tile);
-    });
-    toolbeltMarquee.addEventListener('focusout', function (e) {
-      var tile = e.target.closest('.toolbelt-tile[data-tooltip]');
-      if (tile) tbHide();
-    });
-
-    // A scroll shouldn't leave a stale tooltip parked in the wrong place
-    // (e.g. a keyboard user scrolling the page with a tile still focused).
-    window.addEventListener('scroll', tbHide, { passive: true });
   }
 
 })();

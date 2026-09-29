@@ -569,13 +569,27 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 /* Every direct bento cell gets min-width:0. Grid items default to
    min-width:auto (their content's max-content size), which is normally
    harmless — but .toolbelt-track is deliberately width:max-content for
-   its infinite-scroll animation, and that intrinsic width was winning
-   the grid's auto track-sizing once the layout collapses to a single
-   column below 900px, stretching every card (not just the Tool Belt)
-   out past the viewport. min-width:0 lets each cell shrink to the
-   track's actual size instead and leaves the marquee's own
-   overflow:hidden to do the clipping, as intended. */
+   its infinite-scroll animation, and that intrinsic width can win the
+   grid's auto track-sizing once the layout collapses to a single
+   column, stretching every card (not just the Tool Belt) out past the
+   viewport. min-width:0 lets each cell shrink to the track's actual
+   size instead and leaves the marquee's own overflow:hidden to do the
+   clipping, as intended. */
 .about-bento > *{ min-width:0; }
+
+/* Compact header avatar — shown in place of the full .about-bento-picture
+   card at phone widths (see the 480px breakpoint below). Hidden here by
+   default so it never doubles up with the full picture on larger screens. */
+.about-mini-avatar{
+  display:none;
+  flex:0 0 auto;
+  width:64px; height:64px;
+  border-radius:var(--radius-md);
+  overflow:hidden;
+  border:1px solid var(--surface-border);
+}
+.about-mini-avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+.about-card-header-text{ min-width:0; }
 
 .about-bento-picture{
   grid-column:1;
@@ -789,54 +803,7 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   justify-content:center;
   transition:border-color .3s var(--ease), transform .3s var(--ease);
 }
-.toolbelt-tile:hover{ border-color:var(--accent-400); transform:translateY(-3px); }
-.toolbelt-tile:focus-visible{
-  outline:none;
-  border-color:var(--accent-400);
-  box-shadow:0 0 0 3px color-mix(in srgb, var(--accent-400) 35%, transparent);
-}
-
-/* Keyboard focus should pause the marquee exactly like :hover already
-   does — otherwise a tile a keyboard user has tabbed to keeps sliding
-   out from under them. */
-.toolbelt-marquee:focus-within .toolbelt-track{ animation-play-state:paused; }
-
-/* ---- Custom tool-belt tooltip ----
-   Tile names used to sit in the native title="" attribute, which is slow
-   to appear, can't be styled, and — since every tile lives inside the
-   marquee's clipped, horizontally-masked viewport — a same-element CSS
-   tooltip would get cut off before it could show. Instead a single
-   shared tooltip bubble is appended to <body> (js/main.js) and
-   positioned with getBoundingClientRect() on hover/focus, so it always
-   renders above everything, on both mouse and keyboard. */
-.toolbelt-tooltip{
-  position:fixed;
-  left:0; top:0;
-  transform:translate(-50%, calc(-100% - 10px));
-  padding:6px 10px;
-  border-radius:var(--radius-sm);
-  background:rgba(18,17,16,.92);
-  color:#fff;
-  font-family:var(--font-mono);
-  font-size:.72rem;
-  font-weight:600;
-  letter-spacing:.02em;
-  white-space:nowrap;
-  pointer-events:none;
-  opacity:0;
-  visibility:hidden;
-  transition:opacity .15s var(--ease), visibility .15s;
-  z-index:80;
-}
-.toolbelt-tooltip::after{
-  content:"";
-  position:absolute;
-  left:50%; top:100%;
-  transform:translateX(-50%);
-  border:5px solid transparent;
-  border-top-color:rgba(18,17,16,.92);
-}
-.toolbelt-tooltip.is-visible{ opacity:1; visibility:visible; }
+.toolbelt-tile:hover{ border-color:var(--accent-400); }
 .toolbelt-icon{
   display:flex;
   align-items:center;
@@ -862,8 +829,12 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 }
 @media (max-width:480px){
   .about-bento{ gap:14px; }
-  .about-bento-picture{ max-width:220px; }
-  .about-photo-tag{ font-size:.7rem; padding:8px 12px; bottom:12px; left:12px; }
+  /* Phone view: the full-width portrait card is replaced by a small
+     avatar sitting next to the name (see .about-mini-avatar), matching
+     the compact single-card header used at this size. */
+  .about-bento-picture{ display:none; }
+  .about-card-header{ flex-direction:row; align-items:center; gap:14px; flex-wrap:nowrap; }
+  .about-mini-avatar{ display:block; }
   .about-bento-text{ padding:20px; padding-bottom:38px; }
   .about-bento-capabilities{ padding:20px; }
   .about-bento-contact{ padding:20px; }
@@ -972,6 +943,32 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   margin-bottom:20px;
   border-bottom:1px solid var(--surface-border);
 }
+/* .service-pillar-head is a plain <button> so it works as a real
+   accordion trigger on phone (see the 480px breakpoint below), reset
+   here to look identical to the old always-static header on desktop —
+   full-width, left-aligned, no button chrome, not clickable-looking. */
+button.service-pillar-head{
+  width:100%;
+  background:none;
+  border:none;
+  border-bottom:1px solid var(--surface-border);
+  padding:0 0 20px;
+  margin-bottom:20px;
+  font:inherit;
+  color:inherit;
+  text-align:left;
+  cursor:default;
+}
+.service-accordion-chevron{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  margin-left:auto;
+  flex-shrink:0;
+  width:20px; height:20px;
+  color:var(--text-faint);
+  transition:transform .25s var(--ease);
+}
 .service-pillar-icon{
   width:52px; height:52px;
   border-radius:50%;
@@ -1079,28 +1076,43 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .service-note{ padding:18px 20px; flex-direction:column; align-items:flex-start; }
 }
 @media (max-width:480px){
-  /* Horizontal-scroll carousel of service pillars instead of two full-height
-     stacked cards — keeps every service group intact, just browsed sideways. */
-  .services-grid{
+  /* Phone view: each service becomes a collapsible accordion row instead
+     of a horizontally-scrolling full card — same content, just tucked
+     away until tapped open. The two grids (pillar + compact) are styled
+     identically here so they read as one continuous list. */
+  .services-grid,
+  .services-grid-compact{
     display:flex;
-    overflow-x:auto;
-    scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-    gap:14px;
-    margin:0 -4px;
-    padding:2px 4px 6px;
+    flex-direction:column;
+    gap:12px;
+    margin:0;
+    padding:0;
   }
-  .services-grid::-webkit-scrollbar{ display:none; }
-  .service-pillar{
-    flex:0 0 86%;
-    scroll-snap-align:start;
-    padding:20px 18px;
+  .service-pillar,
+  .service-compact{
+    width:100%;
+    padding:18px 18px;
   }
+  button.service-pillar-head{
+    cursor:pointer;
+    padding-bottom:0;
+    margin-bottom:0;
+    border-bottom:none;
+  }
+  .service-accordion-item.is-open > button.service-pillar-head{
+    padding-bottom:16px;
+    margin-bottom:16px;
+    border-bottom:1px solid var(--surface-border);
+  }
+  .service-body{ display:none; }
+  .service-accordion-item.is-open > .service-body{ display:block; }
+  .service-accordion-chevron{ display:flex; }
+  .service-accordion-item.is-open .service-accordion-chevron{ transform:rotate(180deg); }
   .service-note{ padding:18px 16px; }
 }
 @media (max-width:380px){
-  .service-pillar{ flex-basis:90%; }
+  .service-pillar,
+  .service-compact{ padding:16px 16px; }
 }
 
 /* Compact single-focus service cards (Discord, Web & Portfolio, etc.) */
@@ -1130,24 +1142,6 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 
 @media (max-width:560px){
   .service-compact{ padding:20px 18px; }
-}
-@media (max-width:480px){
-  .services-grid-compact{
-    display:flex;
-    grid-template-columns:none;
-    overflow-x:auto;
-    scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-    gap:12px;
-    margin:16px -4px 0;
-    padding:2px 4px 6px;
-  }
-  .services-grid-compact::-webkit-scrollbar{ display:none; }
-  .service-compact{ flex:0 0 82%; scroll-snap-align:start; }
-}
-@media (max-width:380px){
-  .service-compact{ flex-basis:88%; }
 }
 
 /* ==========================================================================
@@ -1461,7 +1455,7 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   width:100%;
 }
 button.cert-card{ text-align:left; }
-.cert-card:hover:not([disabled]){ transform:translateY(-5px); border-color:var(--accent-400); box-shadow:var(--shadow-soft); }
+.cert-card:hover:not([disabled]){ border-color:var(--accent-400); box-shadow:var(--shadow-soft); }
 .cert-thumb{
   aspect-ratio:16/11;
   overflow:hidden;
@@ -1892,60 +1886,6 @@ button.cert-view{
 .cert-modal-img.is-zoom-animated{ transition:transform .2s var(--ease); }
 .cert-modal.is-loading .cert-modal-img{ visibility:hidden; }
 .cert-modal.is-error .cert-modal-img{ display:none; }
-
-/* ---- Certificate prev/next navigation ----
-   Browses between the certificates in whichever carousel the viewer
-   opened this one from, without closing and reopening the modal. Only
-   shown when that group actually has more than one certificate. */
-.cert-nav-btn{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  z-index:3;
-  width:38px; height:38px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(18,17,16,.72);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
-  color:#fff;
-  transition:background .2s var(--ease), opacity .2s var(--ease), transform .2s var(--ease);
-}
-.cert-nav-btn svg{ width:18px; height:18px; }
-.cert-nav-btn:hover{ background:rgba(255,255,255,.16); }
-.cert-nav-prev{ left:14px; }
-.cert-nav-next{ right:14px; }
-.cert-nav-btn.is-hidden{ display:none; }
-/* Only offer prev/next once a certificate has actually finished loading
-   (matches the zoom controls' own reveal condition). */
-.cert-modal.is-loading .cert-nav-btn,
-.cert-modal.is-error .cert-nav-btn{ opacity:0; visibility:hidden; pointer-events:none; }
-.cert-nav-counter{
-  position:absolute;
-  left:14px; top:14px;
-  z-index:3;
-  padding:5px 10px;
-  border-radius:var(--radius-pill);
-  background:rgba(18,17,16,.72);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
-  border:1px solid rgba(255,255,255,.14);
-  color:#fff;
-  font-family:var(--font-mono);
-  font-size:.7rem;
-  font-weight:600;
-  letter-spacing:.02em;
-}
-.cert-nav-counter.is-hidden{ display:none; }
-.cert-modal.is-loading .cert-nav-counter,
-.cert-modal.is-error .cert-nav-counter{ opacity:0; visibility:hidden; }
-@media (max-width:480px){
-  .cert-nav-btn{ width:34px; height:34px; }
-  .cert-nav-prev{ left:10px; }
-  .cert-nav-next{ right:10px; }
-  .cert-nav-counter{ left:10px; top:10px; font-size:.68rem; padding:4px 9px; }
-}
 
 /* ---- Certificate zoom controls ---- */
 .cert-zoom-controls{
