@@ -442,10 +442,12 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
 }
 .hero-photo-wrap{
   position:relative;
-  width:min(100%, 460px);
-  /* Matches the source cutout's own aspect ratio (422 × 765) so the
+  /* Also capped by viewport height (photo ratio .5516) so the portrait
+     never runs past the bottom of the first screen. */
+  width:min(100%, 460px, calc((100dvh - var(--nav-h) - 40px) * .5516));
+  /* Matches the source cutout's own aspect ratio (739 × 1339) so the
      full-body portrait sits in frame with no crop and no clipping. */
-  aspect-ratio:422/765;
+  aspect-ratio:739/1339;
 }
 .hero-photo-glow {
   position: absolute;
@@ -472,6 +474,11 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   align-items:flex-start;
   justify-content:center;
   background:transparent;
+  /* Fade the hard hip-level cut-off into the page background instead of
+     leaving a visible edge. Masking the wrapper (not just the <img>) also
+     fades the skeleton shimmer with it. */
+  -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 62%, rgba(0,0,0,.55) 82%, transparent 100%);
+  mask-image:linear-gradient(to bottom, #000 0%, #000 62%, rgba(0,0,0,.55) 82%, transparent 100%);
 }
 .hero-photo img{
   width:100%;
@@ -547,25 +554,28 @@ html[data-theme="light"] .theme-toggle .icon-moon{ display:block; }
   .hero .container{ gap:0; }
   .hero-copy{ min-width:0; }
 
-  /* Recompose: compact avatar row up top, big photo hidden entirely */
-  .hero-visual{ display:none; }
-  .hero-identity{
+  /* Recompose: the cutout becomes a cropped head-and-shoulders banner at
+     the top, faded into the page, with the headline pulled up over its
+     soft lower edge. The small avatar row is retired. */
+  .hero{ align-items:flex-start; padding-bottom:clamp(32px, 6vw, 56px); }
+  .hero-identity, .hero-avatar{ display:none; }
+  .hero-visual{
     display:flex;
-    align-items:center;
-    gap:clamp(10px, 1.8vw, 14px);
-    margin-bottom:clamp(16px, 2.9vw, 22px);
+    order:-1;
+    margin-bottom:calc(-1 * clamp(36px, 10vw, 72px));
+    z-index:0;
   }
-  .hero-avatar{
-    display:block;
-    width:clamp(44px, 7.8vw, 60px);
-    height:clamp(44px, 7.8vw, 60px);
-    border-radius:50%;
-    overflow:hidden;
-    flex-shrink:0;
-    border:2px solid var(--surface-border);
-    background:var(--bg-elevated);
+  .hero-copy{ position:relative; z-index:1; }
+  .hero-photo-wrap{
+    width:min(94%, 380px);
+    aspect-ratio:1 / 1.02;
   }
-  .hero-avatar img{ width:100%; height:100%; object-fit:cover; filter:grayscale(.15); }
+  .hero-photo-glow{ width:min(460px, 120vw); top:42%; }
+  .hero-photo img{ object-fit:cover; object-position:50% 0; }
+  .hero-photo{
+    -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 42%, rgba(0,0,0,.45) 70%, transparent 96%);
+    mask-image:linear-gradient(to bottom, #000 0%, #000 42%, rgba(0,0,0,.45) 70%, transparent 96%);
+  }
 
   .hero-title{ font-size:clamp(1.7rem, 5.4vw, 2.6rem); text-align:left; margin-bottom:clamp(10px, 1.8vw, 16px); }
   .hero-lede{ text-align:left; margin-inline:0; margin-bottom:clamp(18px, 3.1vw, 24px); font-size:clamp(.88rem, 2.1vw, 1rem); }
